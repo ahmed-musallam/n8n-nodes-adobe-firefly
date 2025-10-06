@@ -93,6 +93,10 @@ This will:
 
 Your node will appear in the nodes panel under "Firefly Services".
 
+#### pre-built workflows
+
+see: [sample-workflows](./sample-workflows)
+
 ### Project Structure
 
 ```
