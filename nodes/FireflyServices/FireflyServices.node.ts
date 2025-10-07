@@ -12,7 +12,7 @@ export class FireflyServices implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Firefly Services',
 		name: 'fireflyServices',
-		icon: { light: 'file:fireflyServices.svg', dark: 'file:fireflyServices.dark.svg' },
+		icon: { light: 'file:fireflyServices.svg', dark: 'file:fireflyServices.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
@@ -239,9 +239,6 @@ export class FireflyServices implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
-
-		Logger.info('=== FireflyServices Execute Start ===');
-		Logger.info('Input items count:', { count: items.length });
 
 		// Get credentials
 		const credentials = await this.getCredentials('fireflyServicesApi');
