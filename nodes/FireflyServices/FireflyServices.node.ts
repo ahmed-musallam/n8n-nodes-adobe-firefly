@@ -48,6 +48,12 @@ export class FireflyServices implements INodeType {
         noDataExpression: true,
         options: [
           {
+            name: "Cancel Job",
+            value: "cancelJob",
+            description: "Cancel an async job",
+            action: "Cancel async job",
+          },
+          {
             name: "Generate Images (Async)",
             value: "generateImagesAsync",
             description: "Generate images from text prompt asynchronously",
@@ -60,10 +66,11 @@ export class FireflyServices implements INodeType {
             action: "Get async job status",
           },
           {
-            name: "Cancel Job",
-            value: "cancelJob",
-            description: "Cancel an async job",
-            action: "Cancel async job",
+            name: "Upload Image",
+            value: "uploadImage",
+            description:
+              "Upload an image to Firefly storage (valid for 7 days)",
+            action: "Upload image to storage",
           },
         ],
         default: "generateImagesAsync",
@@ -142,44 +149,14 @@ export class FireflyServices implements INodeType {
             type: "options",
             options: [
               {
-                name: "2048x2048 (1:1 Square)",
-                value: "2048x2048",
-                description: "Square format - Compatible with all models",
-              },
-              {
                 name: "1024x1024 (1:1 Square)",
                 value: "1024x1024",
                 description: "Smaller square - Image 3 only",
               },
               {
-                name: "2304x1792 (4:3 Landscape)",
-                value: "2304x1792",
-                description: "Standard landscape - Compatible with all models",
-              },
-              {
-                name: "1792x2304 (3:4 Portrait)",
-                value: "1792x2304",
-                description: "Standard portrait - Compatible with all models",
-              },
-              {
-                name: "2688x1536 (16:9 Widescreen)",
-                value: "2688x1536",
-                description: "Widescreen - Compatible with all models",
-              },
-              {
-                name: "2688x1512 (16:9 Widescreen Alt)",
-                value: "2688x1512",
-                description: "Alternative widescreen - Image 3 only",
-              },
-              {
-                name: "1440x2560 (9:16 Vertical)",
-                value: "1440x2560",
-                description: "Vertical video format - Image 4 only",
-              },
-              {
-                name: "1344x768 (7:4)",
-                value: "1344x768",
-                description: "Wide format - Image 3 only",
+                name: "1152x896 (9:7)",
+                value: "1152x896",
+                description: "Horizontal format - Image 3 only",
               },
               {
                 name: "1344x756 (7:4 Alt)",
@@ -187,9 +164,39 @@ export class FireflyServices implements INodeType {
                 description: "Alternative wide format - Image 3 only",
               },
               {
-                name: "1152x896 (9:7)",
-                value: "1152x896",
-                description: "Horizontal format - Image 3 only",
+                name: "1344x768 (7:4)",
+                value: "1344x768",
+                description: "Wide format - Image 3 only",
+              },
+              {
+                name: "1440x2560 (9:16 Vertical)",
+                value: "1440x2560",
+                description: "Vertical video format - Image 4 only",
+              },
+              {
+                name: "1792x2304 (3:4 Portrait)",
+                value: "1792x2304",
+                description: "Standard portrait - Compatible with all models",
+              },
+              {
+                name: "2048x2048 (1:1 Square)",
+                value: "2048x2048",
+                description: "Square format - Compatible with all models",
+              },
+              {
+                name: "2304x1792 (4:3 Landscape)",
+                value: "2304x1792",
+                description: "Standard landscape - Compatible with all models",
+              },
+              {
+                name: "2688x1512 (16:9 Widescreen Alt)",
+                value: "2688x1512",
+                description: "Alternative widescreen - Image 3 only",
+              },
+              {
+                name: "2688x1536 (16:9 Widescreen)",
+                value: "2688x1536",
+                description: "Widescreen - Compatible with all models",
               },
               {
                 name: "896x1152 (7:9)",
@@ -219,6 +226,183 @@ export class FireflyServices implements INodeType {
             description: "Number of image variations to generate (1-4)",
           },
           {
+            displayName: "Seeds",
+            name: "seeds",
+            type: "string",
+            default: "",
+            placeholder: "12345, 67890",
+            description:
+              "Comma-separated seed image IDs for consistent image generation. Must match numVariations if specified.",
+          },
+          {
+            displayName: "Structure Reference",
+            name: "structureReference",
+            type: "collection",
+            default: {},
+            placeholder: "Add Structure Reference",
+            description:
+              "Reference image for structure guidance. Controls how strictly Firefly adheres to the reference image structure.",
+            options: [
+              {
+                displayName: "Source Type",
+                name: "sourceType",
+                type: "options",
+                options: [
+                  {
+                    name: "URL",
+                    value: "url",
+                    description: "Use a presigned URL",
+                  },
+                  {
+                    name: "Upload ID",
+                    value: "uploadId",
+                    description: "Use an upload ID from the storage API",
+                  },
+                ],
+                default: "url",
+                description: "Choose whether to use a URL or upload ID",
+              },
+              {
+                displayName: "URL",
+                name: "url",
+                type: "string",
+                default: "",
+                placeholder: "https://example.amazonaws.com/image.jpg",
+                description:
+                  "Presigned URL of the reference image. Allowed domains: amazonaws.com, windows.net, dropboxusercontent.com, storage.googleapis.com.",
+                displayOptions: {
+                  show: {
+                    sourceType: ["url"],
+                  },
+                },
+              },
+              {
+                displayName: "Upload ID",
+                name: "uploadId",
+                type: "string",
+                default: "",
+                placeholder: "123e4567-e89b-12d3-a456-426614174000",
+                description: "The upload ID from the storage API response",
+                displayOptions: {
+                  show: {
+                    sourceType: ["uploadId"],
+                  },
+                },
+              },
+              {
+                displayName: "Strength",
+                name: "strength",
+                type: "number",
+                default: 50,
+                typeOptions: {
+                  minValue: 0,
+                  maxValue: 100,
+                },
+                description:
+                  "How strictly Firefly adheres to the reference image (0 = no adherence, 100 = full adherence)",
+              },
+            ],
+          },
+          {
+            displayName: "Style Reference",
+            name: "styleReference",
+            type: "collection",
+            default: {},
+            placeholder: "Add Style Reference",
+            description:
+              "Reference image for style guidance. Controls how strictly Firefly adheres to the reference image style.",
+            options: [
+              {
+                displayName: "Presets",
+                name: "presets",
+                type: "string",
+                default: "",
+                placeholder: "preset1, preset2",
+                description:
+                  "Comma-separated list of style preset IDs to apply",
+              },
+              {
+                displayName: "Source Type",
+                name: "sourceType",
+                type: "options",
+                options: [
+                  {
+                    name: "URL",
+                    value: "url",
+                    description: "Use a presigned URL",
+                  },
+                  {
+                    name: "Upload ID",
+                    value: "uploadId",
+                    description: "Use an upload ID from the storage API",
+                  },
+                ],
+                default: "url",
+                description: "Choose whether to use a URL or upload ID",
+              },
+              {
+                displayName: "Strength",
+                name: "strength",
+                type: "number",
+                default: 50,
+                typeOptions: {
+                  minValue: 0,
+                  maxValue: 100,
+                },
+                description:
+                  "How strictly Firefly adheres to the reference image (0 = no adherence, 100 = full adherence)",
+              },
+              {
+                displayName: "Upload ID",
+                name: "uploadId",
+                type: "string",
+                default: "",
+                placeholder: "123e4567-e89b-12d3-a456-426614174000",
+                description: "The upload ID from the storage API response",
+                displayOptions: {
+                  show: {
+                    sourceType: ["uploadId"],
+                  },
+                },
+              },
+              {
+                displayName: "URL",
+                name: "url",
+                type: "string",
+                default: "",
+                placeholder: "https://example.amazonaws.com/image.jpg",
+                description:
+                  "Presigned URL of the reference image. Allowed domains: amazonaws.com, windows.net, dropboxusercontent.com, storage.googleapis.com.",
+                displayOptions: {
+                  show: {
+                    sourceType: ["url"],
+                  },
+                },
+              },
+            ],
+          },
+          {
+            displayName: "Upsampler Type",
+            name: "upsamplerType",
+            type: "options",
+            options: [
+              {
+                name: "Default",
+                value: "default",
+                description: "Upscales generated images to 2k",
+              },
+              {
+                name: "Low Creativity",
+                value: "low_creativity",
+                description:
+                  "Refines generation by removing distortions, smoothing textures (good for human subjects)",
+              },
+            ],
+            default: "default",
+            description:
+              "Only supported with image4_custom model. Controls upscaling behavior.",
+          },
+          {
             displayName: "Visual Intensity",
             name: "visualIntensity",
             type: "number",
@@ -227,7 +411,8 @@ export class FireflyServices implements INodeType {
               minValue: 2,
               maxValue: 10,
             },
-            description: "Adjust overall intensity (contrast, shadow, hue)",
+            description:
+              "Adjust overall intensity (contrast, shadow, hue). Not supported with image4_custom.",
           },
         ],
       },
@@ -242,6 +427,47 @@ export class FireflyServices implements INodeType {
         displayOptions: {
           show: {
             operation: ["getJobStatus", "cancelJob"],
+          },
+        },
+      },
+      // Upload Image parameters
+      {
+        displayName: "Input Data Field Name",
+        name: "inputDataFieldName",
+        type: "string",
+        required: true,
+        default: "data",
+        description:
+          "The name of the binary field containing the image to upload",
+        displayOptions: {
+          show: {
+            operation: ["uploadImage"],
+          },
+        },
+      },
+      {
+        displayName: "Content Type",
+        name: "contentType",
+        type: "options",
+        options: [
+          {
+            name: "JPEG",
+            value: "image/jpeg",
+          },
+          {
+            name: "PNG",
+            value: "image/png",
+          },
+          {
+            name: "WebP",
+            value: "image/webp",
+          },
+        ],
+        default: "image/jpeg",
+        description: "The MIME type of the image being uploaded",
+        displayOptions: {
+          show: {
+            operation: ["uploadImage"],
           },
         },
       },
@@ -287,6 +513,10 @@ export class FireflyServices implements INodeType {
             customModelId,
             numVariations,
             negativePrompt,
+            seeds,
+            structureReference,
+            styleReference,
+            upsamplerType,
             visualIntensity,
           } = this.getNodeParameter("additionalOptions", i, {}) as IDataObject;
 
@@ -294,6 +524,72 @@ export class FireflyServices implements INodeType {
             const [width, height] = size.split("x").map(Number);
             return { width, height };
           };
+
+          // Parse seeds from comma-separated string to array of integers
+          const parsedSeeds = seeds
+            ? (seeds as string)
+                .split(",")
+                .map((s) => parseInt(s.trim(), 10))
+                .filter((n) => !isNaN(n))
+            : undefined;
+
+          // Build structure reference object
+          let structure;
+          if (
+            structureReference &&
+            Object.keys(structureReference as object).length > 0
+          ) {
+            const structRef = structureReference as IDataObject;
+            const sourceType = structRef.sourceType as string;
+            const source: IDataObject = {};
+
+            if (sourceType === "url" && structRef.url) {
+              source.url = structRef.url;
+            } else if (sourceType === "uploadId" && structRef.uploadId) {
+              source.uploadId = structRef.uploadId;
+            }
+
+            if (Object.keys(source).length > 0) {
+              structure = {
+                imageReference: { source },
+                ...(structRef.strength !== undefined && {
+                  strength: structRef.strength,
+                }),
+              };
+            }
+          }
+
+          // Build style reference object
+          let style;
+          if (
+            styleReference &&
+            Object.keys(styleReference as object).length > 0
+          ) {
+            const styleRef = styleReference as IDataObject;
+            const sourceType = styleRef.sourceType as string;
+            const source: IDataObject = {};
+
+            if (sourceType === "url" && styleRef.url) {
+              source.url = styleRef.url;
+            } else if (sourceType === "uploadId" && styleRef.uploadId) {
+              source.uploadId = styleRef.uploadId;
+            }
+
+            if (Object.keys(source).length > 0) {
+              style = {
+                imageReference: { source },
+                ...(styleRef.strength !== undefined && {
+                  strength: styleRef.strength,
+                }),
+                ...(styleRef.presets && {
+                  presets: (styleRef.presets as string)
+                    .split(",")
+                    .map((p) => p.trim())
+                    .filter((p) => p.length > 0),
+                }),
+              };
+            }
+          }
 
           // Build request body
           const requestBody: GenerateImagesV3AsyncRequest = {
@@ -303,6 +599,10 @@ export class FireflyServices implements INodeType {
             customModelId: customModelId as string,
             numVariations: numVariations as number,
             negativePrompt: negativePrompt as string,
+            seeds: parsedSeeds,
+            structure,
+            style,
+            upsamplerType: upsamplerType as string,
             visualIntensity: visualIntensity as number,
           };
 
@@ -334,6 +634,43 @@ export class FireflyServices implements INodeType {
           await fireflyClient.cancelJob(jobId);
 
           Logger.info("Job canceled successfully");
+        } else if (operation === "uploadImage") {
+          const inputDataFieldName = this.getNodeParameter(
+            "inputDataFieldName",
+            i,
+          ) as string;
+          const contentType = this.getNodeParameter("contentType", i) as
+            | "image/jpeg"
+            | "image/png"
+            | "image/webp";
+
+          Logger.info("Uploading image via FireflyClient...", {
+            inputDataFieldName,
+            contentType,
+          });
+
+          // Get binary data
+          const binaryData = this.helpers.assertBinaryData(
+            i,
+            inputDataFieldName,
+          );
+          const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
+            i,
+            inputDataFieldName,
+          );
+
+          Logger.info("Binary data retrieved", {
+            mimeType: binaryData.mimeType,
+            size: binaryDataBuffer.length,
+          });
+
+          const response = await fireflyClient.uploadImage(
+            binaryDataBuffer,
+            contentType,
+          );
+          responseData = response as unknown as IDataObject;
+
+          Logger.info("Upload image response:", { responseData });
         } else {
           throw new ApplicationError(`Unknown operation: ${operation}`);
         }

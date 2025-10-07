@@ -24,6 +24,13 @@ export type GenerateImagesV3AsyncResponse = {
   [input: string]: string | number | boolean | object | undefined;
 };
 
+export type UploadImageResponse = {
+  // See OpenAPI: #/components/schemas/StorageImageResponse (upload_image.json)
+  images: Array<{
+    id: string;
+  }>;
+};
+
 export type FireflyClientOptions = {
   imsClient: IMSClient;
   baseUrl?: string; // override for testing
@@ -155,5 +162,46 @@ export class FireflyClient {
         `Firefly cancelJob failed: ${response.status} ${response.statusText} - ${errorText}`,
       );
     }
+  }
+
+  /**
+   * Upload an image to Firefly Storage API.
+   * Implements the POST /v2/storage/image endpoint per upload_image.json.
+   * The uploaded asset will be valid for 7 days from the date of upload.
+   *
+   * @param imageData - Binary image data (Buffer, Blob, or Uint8Array)
+   * @param contentType - MIME type (image/jpeg, image/png, or image/webp)
+   * @returns Upload response containing the image ID
+   * @throws Error if the API call fails
+   */
+  async uploadImage(
+    imageData: Uint8Array | Blob | ArrayBuffer,
+    contentType: "image/jpeg" | "image/png" | "image/webp",
+  ): Promise<UploadImageResponse> {
+    const url = `${this.baseUrl}/v2/storage/image`;
+
+    const headers: Record<string, string> = {
+      "Content-Type": contentType,
+      ...(await this.imsClient.getAuthHeaders()),
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: imageData as BodyInit,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Firefly uploadImage failed: ${response.status} ${response.statusText} - ${errorText}`,
+      );
+    }
+
+    const data = (await response.json()) as UploadImageResponse;
+    if (!data.images || data.images.length === 0) {
+      throw new Error("Firefly API response missing image IDs");
+    }
+    return data;
   }
 }
