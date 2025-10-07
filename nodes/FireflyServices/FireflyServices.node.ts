@@ -84,9 +84,10 @@ export class FireflyServices implements INodeType {
         default: "",
         placeholder: "A futuristic cityscape at sunset",
         description:
-          "Text description of the image to generate (1-1024 characters)",
+          "Text description of the image to generate (1-1024 characters). An error will be thrown if prompt exceeds 1024 characters.",
         typeOptions: {
           rows: 4,
+          maxValue: 1024,
         },
         displayOptions: {
           show: {
@@ -212,7 +213,11 @@ export class FireflyServices implements INodeType {
             name: "negativePrompt",
             type: "string",
             default: "",
-            description: "Things to avoid in the generated image",
+            description:
+              "Things to avoid in the generated image (max 1024 characters). Follows the same handling as the main prompt.",
+            typeOptions: {
+              maxValue: 1024,
+            },
           },
           {
             displayName: "Number of Variations",
@@ -507,6 +512,20 @@ export class FireflyServices implements INodeType {
             "modelVersion",
             i,
           ) as ModelVersion;
+
+          // Validate prompt length
+          const MAX_PROMPT_LENGTH = 1024;
+          if (prompt.length > MAX_PROMPT_LENGTH) {
+            throw new ApplicationError(
+              `Prompt exceeds maximum length of ${MAX_PROMPT_LENGTH} characters (current: ${prompt.length} characters). Please shorten your prompt.`,
+            );
+          }
+
+          if (prompt.length < 1) {
+            throw new ApplicationError(
+              "Prompt must be at least 1 character long.",
+            );
+          }
           const {
             imageSize,
             contentClass,
@@ -519,6 +538,15 @@ export class FireflyServices implements INodeType {
             upsamplerType,
             visualIntensity,
           } = this.getNodeParameter("additionalOptions", i, {}) as IDataObject;
+
+          // Validate negative prompt length
+          if (negativePrompt && typeof negativePrompt === "string") {
+            if (negativePrompt.length > MAX_PROMPT_LENGTH) {
+              throw new ApplicationError(
+                `Negative prompt exceeds maximum length of ${MAX_PROMPT_LENGTH} characters (current: ${negativePrompt.length} characters). Please shorten your negative prompt.`,
+              );
+            }
+          }
 
           const parseSize = (size: string) => {
             const [width, height] = size.split("x").map(Number);
