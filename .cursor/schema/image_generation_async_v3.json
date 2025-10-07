@@ -4,18 +4,18 @@
     "version": "V3",
     "title": "Firefly API",
     "description": "REST API for Adobe Firefly, for enterprise usage."
-},
-"servers": [
+  },
+  "servers": [
     {
-        "url": "https://firefly-api.adobe.io"
+      "url": "https://firefly-api.adobe.io"
     }
-],
-"security": [
-  {
+  ],
+  "security": [
+    {
       "X-Api-Key": [],
       "AccessToken": []
-  }
-],
+    }
+  ],
   "paths": {
     "/v3/images/generate-async": {
       "post": {
@@ -31,7 +31,13 @@
             "schema": {
               "type": "string",
               "default": "image3",
-              "enum": ["image3", "image3_custom", "image4_standard", "image4_ultra", "image4_custom"]
+              "enum": [
+                "image3",
+                "image3_custom",
+                "image4_standard",
+                "image4_ultra",
+                "image4_custom"
+              ]
             }
           }
         ],
@@ -112,7 +118,12 @@
                 "description": "Indicates the reason access is not authorized.",
                 "schema": {
                   "type": "string",
-                  "enum": ["quota_exhausted", "user_non_entitled", "user_profile_denied", "invalid_ims_scope"]
+                  "enum": [
+                    "quota_exhausted",
+                    "user_non_entitled",
+                    "user_profile_denied",
+                    "invalid_ims_scope"
+                  ]
                 }
               }
             }
@@ -171,15 +182,9 @@
                       "validation_errors": [
                         {
                           "ctx": {
-                            "enum_values": [
-                              "photo",
-                              "art"
-                            ]
+                            "enum_values": ["photo", "art"]
                           },
-                          "loc": [
-                            "body",
-                            "contentClass"
-                          ],
+                          "loc": ["body", "contentClass"],
                           "msg": "value is not a valid enumeration member; permitted: 'photo', 'art'",
                           "type": "type_error.enum"
                         }
@@ -488,20 +493,12 @@
     "schemas": {
       "AlignmentHorizontal": {
         "description": "An enumeration.",
-        "enum": [
-          "center",
-          "left",
-          "right"
-        ],
+        "enum": ["center", "left", "right"],
         "title": "AlignmentHorizontal"
       },
       "AlignmentVertical": {
         "description": "An enumeration.",
-        "enum": [
-          "center",
-          "top",
-          "bottom"
-        ],
+        "enum": ["center", "top", "bottom"],
         "title": "AlignmentVertical"
       },
       "ApiError": {
@@ -529,9 +526,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "error_code"
-        ],
+        "required": ["error_code"],
         "title": "ApiError",
         "type": "object"
       },
@@ -553,11 +548,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "jobId",
-          "statusUrl",
-          "cancelUrl"
-        ],
+        "required": ["jobId", "statusUrl", "cancelUrl"],
         "title": "AsyncAcceptResponseV3",
         "type": "object"
       },
@@ -643,10 +634,7 @@
             "enum": ["pending", "running", "succeeded", "failed", "canceled"]
           }
         },
-        "required": [
-          "status",
-          "jobId"
-        ],
+        "required": ["status", "jobId"],
         "title": "AsyncTaskResponseV3",
         "type": "object"
       },
@@ -657,9 +645,7 @@
             "description": "Source image that Firefly expands, fills or uses to generate similar images"
           }
         },
-        "required": [
-          "source"
-        ],
+        "required": ["source"],
         "title": "BaseInputImageV3",
         "type": "object"
       },
@@ -670,9 +656,7 @@
             "description": "Original mask image."
           }
         },
-        "required": [
-          "source"
-        ],
+        "required": ["source"],
         "title": "BaseInputMaskV3",
         "type": "object"
       },
@@ -690,10 +674,7 @@
             "$ref": "#/components/schemas/ExpandImageRequestV3"
           }
         },
-        "required": [
-          "request",
-          "files"
-        ],
+        "required": ["request", "files"],
         "title": "Body_expandImagesV3Async",
         "type": "object"
       },
@@ -711,10 +692,7 @@
             "$ref": "#/components/schemas/FillImageRequestV3"
           }
         },
-        "required": [
-          "request",
-          "files"
-        ],
+        "required": ["request", "files"],
         "title": "Body_fillImagesV3Async",
         "type": "object"
       },
@@ -732,10 +710,7 @@
             "$ref": "#/components/schemas/GenerateImagesRequestV3"
           }
         },
-        "required": [
-          "request",
-          "files"
-        ],
+        "required": ["request", "files"],
         "title": "Body_generateImagesV3Async",
         "type": "object"
       },
@@ -753,10 +728,7 @@
             "$ref": "#/components/schemas/GenerateObjectCompositeRequestV3"
           }
         },
-        "required": [
-          "request",
-          "files"
-        ],
+        "required": ["request", "files"],
         "title": "Body_generateObjectCompositeV3Async",
         "type": "object"
       },
@@ -774,10 +746,7 @@
             "$ref": "#/components/schemas/GenerateSimilarImagesRequestV3"
           }
         },
-        "required": [
-          "request",
-          "files"
-        ],
+        "required": ["request", "files"],
         "title": "Body_generateSimilarImagesV3Async",
         "type": "object"
       },
@@ -809,17 +778,12 @@
       },
       "ColliogAsyncStatusErrorCodeV3": {
         "description": "An enumeration.",
-        "enum": [
-          "unknown_job_id"
-        ],
+        "enum": ["unknown_job_id"],
         "type": "string"
       },
       "ContentClassV3": {
         "description": "An enumeration.",
-        "enum": [
-          "photo",
-          "art"
-        ],
+        "enum": ["photo", "art"],
         "type": "string"
       },
       "ExpandImageRequestV3": {
@@ -875,9 +839,7 @@
             "title": "The size"
           }
         },
-        "required": [
-          "image"
-        ],
+        "required": ["image"],
         "title": "Images expand payload",
         "type": "object"
       },
@@ -897,10 +859,7 @@
             "description": "When you provide size as input, this value is the same."
           }
         },
-        "required": [
-          "size",
-          "outputs"
-        ],
+        "required": ["size", "outputs"],
         "title": "Images expand response",
         "type": "object"
       },
@@ -964,10 +923,7 @@
             "title": "The size"
           }
         },
-        "required": [
-          "image",
-          "mask"
-        ],
+        "required": ["image", "mask"],
         "title": "Fill images payload",
         "type": "object"
       },
@@ -987,10 +943,7 @@
             "description": "When you provide size as input, this value is the same."
           }
         },
-        "required": [
-          "size",
-          "outputs"
-        ],
+        "required": ["size", "outputs"],
         "title": "Fill images response.",
         "type": "object"
       },
@@ -1068,9 +1021,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "prompt"
-        ],
+        "required": ["prompt"],
         "title": "Generating images from prompt",
         "type": "object"
       },
@@ -1103,10 +1054,7 @@
             "$ref": "#/components/schemas/Size"
           }
         },
-        "required": [
-          "size",
-          "outputs"
-        ],
+        "required": ["size", "outputs"],
         "title": "Generating images from prompt",
         "type": "object"
       },
@@ -1169,10 +1117,7 @@
             "$ref": "#/components/schemas/StylesV3"
           }
         },
-        "required": [
-          "image",
-          "prompt"
-        ],
+        "required": ["image", "prompt"],
         "title": "Generate object composite from prompt request",
         "type": "object"
       },
@@ -1195,10 +1140,7 @@
             "description": "When you provide size as input, this value is the same."
           }
         },
-        "required": [
-          "size",
-          "outputs"
-        ],
+        "required": ["size", "outputs"],
         "title": "Generate object composite from prompt response",
         "type": "object"
       },
@@ -1241,9 +1183,7 @@
             "title": "The size"
           }
         },
-        "required": [
-          "image"
-        ],
+        "required": ["image"],
         "title": "Generating similar images from a reference image",
         "type": "object"
       },
@@ -1263,10 +1203,7 @@
             "description": "When you provide size as input, this value is the same."
           }
         },
-        "required": [
-          "size",
-          "outputs"
-        ],
+        "required": ["size", "outputs"],
         "title": "Generating similar images response",
         "type": "object"
       },
@@ -1301,9 +1238,7 @@
             "title": "Source image"
           }
         },
-        "required": [
-          "source"
-        ],
+        "required": ["source"],
         "title": "InputImageV3",
         "type": "object"
       },
@@ -1318,9 +1253,7 @@
             "$ref": "#/components/schemas/PublicBinaryInputV3"
           }
         },
-        "required": [
-          "source"
-        ],
+        "required": ["source"],
         "title": "InputMaskV3",
         "type": "object"
       },
@@ -1334,10 +1267,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "seed",
-          "image"
-        ],
+        "required": ["seed", "image"],
         "title": "OutputImageV3",
         "type": "object"
       },
@@ -1460,10 +1390,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "width",
-          "height"
-        ],
+        "required": ["width", "height"],
         "type": "object"
       },
       "StructureImageReferenceV3": {
@@ -1544,11 +1471,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
+        "required": ["loc", "msg", "type"],
         "title": "ValidationError",
         "type": "object"
       },
@@ -1581,11 +1504,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
+        "required": ["loc", "msg", "type"],
         "title": "ValidationErrorMessage",
         "type": "object"
       }
@@ -1597,9 +1516,9 @@
         "type": "http"
       },
       "X-Api-Key": {
-          "type": "apiKey",
-          "name": "x-api-key",
-          "in": "header"
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
       }
     }
   }

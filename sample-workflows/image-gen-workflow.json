@@ -1,168 +1,168 @@
 {
-	"nodes": [
-		{
-			"parameters": {
-				"prompt": "A futuristic sunset of a large metropolis",
-				"modelVersion": "image3",
-				"additionalOptions": {
-					"numVariations": 4
-				}
-			},
-			"type": "CUSTOM.fireflyServices",
-			"typeVersion": 1,
-			"position": [-256, 272],
-			"id": "495cae4c-fc3d-45a0-bc05-a30f2084c02a",
-			"name": "Gen Image",
-			"executeOnce": false,
-			"credentials": {
-				"fireflyServicesApi": {
-					"id": "FCkqkLfuqPOyRdv4",
-					"name": "Firefly Services account"
-				}
-			}
-		},
-		{
-			"parameters": {
-				"conditions": {
-					"options": {
-						"caseSensitive": true,
-						"leftValue": "",
-						"typeValidation": "strict",
-						"version": 2
-					},
-					"conditions": [
-						{
-							"id": "a6dfdf2e-fa05-4fd0-8521-e59d19fdd94f",
-							"leftValue": "={{ $json.status }}",
-							"rightValue": "running",
-							"operator": {
-								"type": "string",
-								"operation": "equals",
-								"name": "filter.operator.equals"
-							}
-						},
-						{
-							"id": "45bc5539-4b21-4605-8759-be365fa1887c",
-							"leftValue": "={{ $json.status }}",
-							"rightValue": "pending",
-							"operator": {
-								"type": "string",
-								"operation": "equals",
-								"name": "filter.operator.equals"
-							}
-						}
-					],
-					"combinator": "or"
-				},
-				"options": {}
-			},
-			"type": "n8n-nodes-base.if",
-			"typeVersion": 2.2,
-			"position": [416, 272],
-			"id": "16f0b676-7bac-45ab-9cf4-4585d419b1e2",
-			"name": "In in progress"
-		},
-		{
-			"parameters": {
-				"amount": 2
-			},
-			"type": "n8n-nodes-base.wait",
-			"typeVersion": 1.1,
-			"position": [192, 192],
-			"id": "f43544d5-775f-4668-874e-f92212f69ecc",
-			"name": "Wait 2 seconds",
-			"webhookId": "d2448aaf-236c-4e7f-b979-db5ec6af6a87"
-		},
-		{
-			"parameters": {
-				"operation": "getJobStatus"
-			},
-			"type": "CUSTOM.fireflyServices",
-			"typeVersion": 1,
-			"position": [-32, 272],
-			"id": "9d7f5dc5-eddd-4099-af91-e478d5582a2d",
-			"name": "Check Job Status",
-			"credentials": {
-				"fireflyServicesApi": {
-					"id": "FCkqkLfuqPOyRdv4",
-					"name": "Firefly Services account"
-				}
-			}
-		},
-		{
-			"parameters": {
-				"url": "={{ $json.result.outputs[0].image.url }}",
-				"options": {
-					"response": {
-						"response": {
-							"responseFormat": "file"
-						}
-					}
-				}
-			},
-			"type": "n8n-nodes-base.httpRequest",
-			"typeVersion": 4.2,
-			"position": [640, 272],
-			"id": "91327b49-a9a6-411a-b170-7c8e4c0b48a6",
-			"name": "HTTP Request"
-		}
-	],
-	"connections": {
-		"Gen Image": {
-			"main": [
-				[
-					{
-						"node": "Check Job Status",
-						"type": "main",
-						"index": 0
-					}
-				]
-			]
-		},
-		"In in progress": {
-			"main": [
-				[
-					{
-						"node": "Check Job Status",
-						"type": "main",
-						"index": 0
-					}
-				],
-				[
-					{
-						"node": "HTTP Request",
-						"type": "main",
-						"index": 0
-					}
-				]
-			]
-		},
-		"Wait 2 seconds": {
-			"main": [
-				[
-					{
-						"node": "In in progress",
-						"type": "main",
-						"index": 0
-					}
-				]
-			]
-		},
-		"Check Job Status": {
-			"main": [
-				[
-					{
-						"node": "Wait 2 seconds",
-						"type": "main",
-						"index": 0
-					}
-				]
-			]
-		}
-	},
-	"pinData": {},
-	"meta": {
-		"templateCredsSetupCompleted": true,
-		"instanceId": "f32a6dab1cb21d21c71dc98697cfca18dbb21ac762a44e185b905684a8455836"
-	}
+  "nodes": [
+    {
+      "parameters": {
+        "prompt": "A futuristic sunset of a large metropolis",
+        "modelVersion": "image3",
+        "additionalOptions": {
+          "numVariations": 4
+        }
+      },
+      "type": "CUSTOM.fireflyServices",
+      "typeVersion": 1,
+      "position": [-256, 272],
+      "id": "495cae4c-fc3d-45a0-bc05-a30f2084c02a",
+      "name": "Gen Image",
+      "executeOnce": false,
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a6dfdf2e-fa05-4fd0-8521-e59d19fdd94f",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "running",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "45bc5539-4b21-4605-8759-be365fa1887c",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [416, 272],
+      "id": "16f0b676-7bac-45ab-9cf4-4585d419b1e2",
+      "name": "In in progress"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [192, 192],
+      "id": "f43544d5-775f-4668-874e-f92212f69ecc",
+      "name": "Wait 2 seconds",
+      "webhookId": "d2448aaf-236c-4e7f-b979-db5ec6af6a87"
+    },
+    {
+      "parameters": {
+        "operation": "getJobStatus"
+      },
+      "type": "CUSTOM.fireflyServices",
+      "typeVersion": 1,
+      "position": [-32, 272],
+      "id": "9d7f5dc5-eddd-4099-af91-e478d5582a2d",
+      "name": "Check Job Status",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.result.outputs[0].image.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 272],
+      "id": "91327b49-a9a6-411a-b170-7c8e4c0b48a6",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "Gen Image": {
+      "main": [
+        [
+          {
+            "node": "Check Job Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "In in progress": {
+      "main": [
+        [
+          {
+            "node": "Check Job Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2 seconds": {
+      "main": [
+        [
+          {
+            "node": "In in progress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Job Status": {
+      "main": [
+        [
+          {
+            "node": "Wait 2 seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f32a6dab1cb21d21c71dc98697cfca18dbb21ac762a44e185b905684a8455836"
+  }
 }

@@ -6,11 +6,15 @@
 
 ```typescript
 // ✅ Correct
-import { NodeConnectionTypes, type INodeType, type INodeTypeDescription } from 'n8n-workflow';
+import {
+  NodeConnectionTypes,
+  type INodeType,
+  type INodeTypeDescription,
+} from "n8n-workflow";
 inputs: [NodeConnectionTypes.Main];
 
 // ❌ Wrong - causes TS2693 error
-import { NodeConnectionType } from 'n8n-workflow';
+import { NodeConnectionType } from "n8n-workflow";
 inputs: [NodeConnectionType.Main];
 ```
 

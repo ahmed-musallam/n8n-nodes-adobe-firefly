@@ -26,18 +26,18 @@ Each node must implement `INodeType` interface with the following structure:
 
 ```typescript
 export class MyNode implements INodeType {
-	description: INodeTypeDescription = {
-		displayName: 'My Node',
-		name: 'myNode',
-		icon: {
-			light: 'file:../../icons/mynode.svg',
-			dark: 'file:../../icons/mynode.dark.svg',
-		},
-		group: ['transform'],
-		version: 1,
-		inputs: [NodeConnectionTypes.Main],
-		outputs: [NodeConnectionTypes.Main],
-		// ...
-	};
+  description: INodeTypeDescription = {
+    displayName: "My Node",
+    name: "myNode",
+    icon: {
+      light: "file:../../icons/mynode.svg",
+      dark: "file:../../icons/mynode.dark.svg",
+    },
+    group: ["transform"],
+    version: 1,
+    inputs: [NodeConnectionTypes.Main],
+    outputs: [NodeConnectionTypes.Main],
+    // ...
+  };
 }
 ```

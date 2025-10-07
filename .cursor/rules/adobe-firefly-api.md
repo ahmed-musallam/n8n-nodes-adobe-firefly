@@ -58,9 +58,9 @@ The Adobe Firefly API uses the **OAuth 2.0 Client Credentials** flow for server-
 
    ```json
    {
-   	"access_token": "eyJ4NXQiOiJ...",
-   	"token_type": "bearer",
-   	"expires_in": 86399999
+     "access_token": "eyJ4NXQiOiJ...",
+     "token_type": "bearer",
+     "expires_in": 86399999
    }
    ```
 

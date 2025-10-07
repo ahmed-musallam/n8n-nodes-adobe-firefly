@@ -13,15 +13,15 @@ Use `displayOptions` to show/hide credentials based on authentication type:
 
 ```typescript
 credentials: [
-	{
-		name: 'credentialName',
-		required: true,
-		displayOptions: {
-			show: {
-				authentication: ['accessToken'],
-			},
-		},
-	},
+  {
+    name: "credentialName",
+    required: true,
+    displayOptions: {
+      show: {
+        authentication: ["accessToken"],
+      },
+    },
+  },
 ];
 ```
 
