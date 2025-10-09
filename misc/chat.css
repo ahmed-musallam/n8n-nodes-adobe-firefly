@@ -1,0 +1,380 @@
+/* ===================================
+   Adobe Spectrum 2 Design System
+   Inspired by Adobe's modern design language
+   =================================== */
+
+:root {
+  /* Spectrum 2 Color Tokens - Light Theme */
+  --spectrum-gray-50: #ffffff;
+  --spectrum-gray-75: #fafafa;
+  --spectrum-gray-100: #f5f5f5;
+  --spectrum-gray-200: #e8e8e8;
+  --spectrum-gray-300: #d3d3d3;
+  --spectrum-gray-400: #bcbcbc;
+  --spectrum-gray-500: #9a9a9a;
+  --spectrum-gray-600: #787878;
+  --spectrum-gray-700: #5c5c5c;
+  --spectrum-gray-800: #3e3e3e;
+  --spectrum-gray-900: #2c2c2c;
+
+  --spectrum-blue-400: #5aa9fa;
+  --spectrum-blue-500: #378ef0;
+  --spectrum-blue-600: #1473e6;
+  --spectrum-blue-700: #0d66d0;
+  --spectrum-blue-800: #095aba;
+
+  /* Adobe Brand Gradient */
+  --adobe-gradient: linear-gradient(
+    135deg,
+    #ff0000 0%,
+    #d50057 50%,
+    #a100a1 100%
+  );
+  --adobe-gradient-dark: linear-gradient(
+    135deg,
+    #c20000 0%,
+    #990042 50%,
+    #6b0074 100%
+  );
+
+  --spectrum-accent-color-100: #e5f0ff;
+  --spectrum-accent-color-200: #cce0ff;
+  --spectrum-accent-color-600: #1473e6;
+  --spectrum-accent-color-700: #0d66d0;
+  --spectrum-accent-color-800: #095aba;
+
+  /* Semantic Colors */
+  --chat--color-primary: var(--spectrum-blue-600);
+  --chat--color-primary-hover: var(--spectrum-blue-700);
+  --chat--color-primary-active: var(--spectrum-blue-800);
+  --chat--color-accent: var(--spectrum-blue-500);
+  --chat--color-accent-light: var(--spectrum-accent-color-100);
+
+  --chat--color-white: var(--spectrum-gray-50);
+  --chat--color-background: var(--spectrum-gray-75);
+  --chat--color-surface: var(--spectrum-gray-50);
+  --chat--color-border: var(--spectrum-gray-300);
+  --chat--color-border-light: var(--spectrum-gray-200);
+
+  --chat--color-text: var(--spectrum-gray-900);
+  --chat--color-text-secondary: var(--spectrum-gray-700);
+  --chat--color-text-disabled: var(--spectrum-gray-500);
+
+  /* Typography - Spectrum 2 */
+  --chat--font-family:
+    "adobe-clean", "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --chat--font-size-sm: 0.875rem;
+  --chat--font-size-base: 0.9375rem;
+  --chat--font-size-lg: 1.125rem;
+  --chat--font-size-xl: 1.5rem;
+  --chat--line-height-base: 1.5;
+  --chat--font-weight-normal: 400;
+  --chat--font-weight-medium: 500;
+  --chat--font-weight-bold: 700;
+
+  /* Spacing - Spectrum 2 8px grid */
+  --chat--spacing-xs: 0.25rem; /* 4px */
+  --chat--spacing-sm: 0.5rem; /* 8px */
+  --chat--spacing-md: 1rem; /* 16px */
+  --chat--spacing-lg: 1.5rem; /* 24px */
+  --chat--spacing-xl: 2rem; /* 32px */
+
+  /* Border Radius - Spectrum 2 */
+  --chat--border-radius-sm: 4px;
+  --chat--border-radius-md: 8px;
+  --chat--border-radius-lg: 12px;
+  --chat--border-radius-full: 50%;
+
+  /* Shadows - Spectrum 2 */
+  --chat--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --chat--shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --chat--shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  /* Transitions */
+  --chat--transition-fast: 130ms cubic-bezier(0.4, 0, 0.2, 1);
+  --chat--transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Component-Specific Variables */
+  --chat--header--height: auto;
+  --chat--header--padding: var(--chat--spacing-lg) var(--chat--spacing-md);
+  --chat--header--background: var(--adobe-gradient);
+  --chat--header--border-bottom: none;
+
+  --chat--message--padding: var(--chat--spacing-sm);
+  --chat--message--border-radius: var(--chat--border-radius-md);
+  --chat--message--margin-bottom: var(--chat--spacing-md);
+  --chat--message--bot--background: var(--spectrum-gray-100);
+  --chat--message--bot--color: var(--chat--color-text);
+  --chat--message--user--background: var(--chat--color-primary);
+  --chat--message--user--color: var(--spectrum-gray-50);
+
+  --chat--input--height: 56px;
+  --chat--input--padding: var(--chat--spacing-md);
+  --chat--input--border-radius: var(--chat--border-radius-md);
+  --chat--input--background: var(--spectrum-gray-50);
+  --chat--input--border: 1px solid var(--chat--color-border);
+  --chat--input--focus-border: 2px solid var(--chat--color-primary);
+
+  --chat--button--size: 36px;
+  --chat--button--border-radius: var(--chat--border-radius-sm);
+}
+
+/* ===================================
+   Layout Components
+   =================================== */
+
+.chat-layout {
+  font-family: var(--chat--font-family);
+  font-size: var(--chat--font-size-base);
+  line-height: var(--chat--line-height-base);
+  color: var(--chat--color-text);
+  background: var(--chat--color-surface);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: var(--chat--shadow-lg);
+  border-radius: var(--chat--border-radius-lg);
+  overflow: hidden;
+}
+
+/* ===================================
+   Header
+   =================================== */
+
+.chat-header {
+  padding: var(--chat--header--padding);
+  background: var(--chat--header--background);
+  border-bottom: var(--chat--header--border-bottom);
+  flex-shrink: 0;
+}
+
+.chat-heading h1 {
+  margin: 0;
+  font-size: var(--chat--font-size-xl);
+  font-weight: var(--chat--font-weight-bold);
+  color: var(--chat--color-text);
+  letter-spacing: -0.02em;
+}
+
+/* ===================================
+   Body & Messages
+   =================================== */
+
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--chat--color-background);
+  padding: var(--chat--spacing-md);
+}
+
+.chat-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--chat--spacing-md);
+}
+
+.chat-message {
+  display: flex;
+  flex-direction: row;
+  max-width: 95%;
+  animation: slideIn var(--chat--transition-base);
+  padding: var(--chat--spacing-xs);
+  margin-top: var(--chat--spacing-xs);
+  border-radius: var(--chat--message--border-radius);
+  border-bottom-left-radius: var(--chat--spacing-xs);
+  border: 1px solid var(--spectrum-gray-200);
+  box-shadow: var(--chat--shadow-sm);
+}
+
+.chat-message img {
+  max-width: 100%;
+}
+
+.chat-message .chat-message-files {
+  padding-top: 0;
+  padding-left: var(--chat--spacing-xs);
+  padding-right: var(--chat--spacing-xs);
+}
+
+.chat-message .chat-message-files .chat-file {
+  padding: var(--chat--spacing-xs);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message-from-bot {
+  align-self: flex-start;
+  background: var(--spectrum-gray-100);
+  border-radius: var(--chat--message--border-radius);
+  padding: var(--chat--spacing-xs);
+}
+
+.chat-message-from-user {
+  align-self: flex-end;
+}
+
+.chat-message-from-bot .chat-message-markdown {
+  background: var(--chat--message--bot--background);
+  color: var(--chat--message--bot--color);
+  padding: var(--chat--message--padding);
+}
+
+.chat-message-from-user .chat-message-markdown,
+.chat-message-from-user .chat-message-files {
+  background: var(--chat--message--user--background);
+  color: var(--chat--message--user--color);
+}
+.chat-message-from-user .chat-message-markdown,
+.chat-message-from-user .chat-message-files {
+  padding: var(--chat--message--padding);
+}
+
+.chat-message-markdown p {
+  margin: 0;
+  font-size: var(--chat--font-size-base);
+  line-height: var(--chat--line-height-base);
+}
+
+/* ===================================
+   Footer & Input
+   =================================== */
+
+.chat-footer {
+  padding: var(--chat--spacing-md);
+  background: var(--chat--color-surface);
+  border-top: 1px solid var(--chat--color-border-light);
+  flex-shrink: 0;
+}
+
+.chat-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--chat--spacing-sm);
+}
+
+.chat-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--chat--spacing-sm);
+  background: var(--chat--input--background);
+  border: var(--chat--input--border);
+  border-radius: var(--chat--input--border-radius);
+  padding: var(--chat--spacing-sm);
+  transition:
+    border-color var(--chat--transition-fast),
+    box-shadow var(--chat--transition-fast);
+}
+
+.chat-inputs:focus-within {
+  border: var(--chat--input--focus-border);
+  box-shadow: 0 0 0 1px var(--chat--color-primary);
+}
+
+.chat-inputs textarea {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  font-family: var(--chat--font-family);
+  font-size: var(--chat--font-size-base);
+  color: var(--chat--color-text);
+  line-height: var(--chat--line-height-base);
+  padding: var(--chat--spacing-sm);
+  min-height: 40px;
+  max-height: 200px;
+}
+
+.chat-inputs textarea::placeholder {
+  color: var(--chat--color-text-disabled);
+}
+
+/* ===================================
+   Buttons
+   =================================== */
+
+.chat-inputs-controls {
+  display: flex;
+  gap: var(--chat--spacing-xs);
+  align-items: center;
+}
+
+.chat-input-file-button,
+.chat-input-send-button {
+  width: var(--chat--button--size);
+  height: var(--chat--button--size);
+  border: none;
+  border-radius: var(--chat--button--border-radius);
+  background: transparent;
+  color: var(--chat--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--chat--transition-fast);
+  padding: 0;
+}
+
+.chat-input-file-button:hover,
+.chat-input-send-button:not([disabled]):hover {
+  background: var(--spectrum-gray-200);
+  color: var(--chat--color-primary);
+}
+
+.chat-input-file-button:active,
+.chat-input-send-button:not([disabled]):active {
+  background: var(--spectrum-gray-300);
+  transform: scale(0.95);
+}
+
+.chat-input-send-button:not([disabled]) {
+  color: var(--chat--color-primary);
+}
+
+.chat-input-send-button:not([disabled]):hover {
+  background: var(--chat--color-accent-light);
+  color: var(--chat--color-primary-hover);
+}
+
+.chat-input-send-button[disabled] {
+  color: var(--chat--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.chat-input-file-button svg,
+.chat-input-send-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ===================================
+   Scrollbar Styling (Webkit)
+   =================================== */
+
+.chat-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+  background: var(--spectrum-gray-400);
+  border-radius: 4px;
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover {
+  background: var(--spectrum-gray-500);
+}
