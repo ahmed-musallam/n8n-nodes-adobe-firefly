@@ -31,9 +31,17 @@ For Docker-based deployments, add the package in your [data folder's](https://do
 
 **Firefly Services**
 
+### Image Generation
+
 - **Generate Images Async**: Create images from text prompts using Adobe Firefly's generative AI
-- **Get Job Status**: Check the status of an asynchronous image generation job
-- **Cancel Job**: Cancel a pending or running image generation job
+- **Generate Similar Images (Async)**: Generate variations based on a reference image
+- **Generate Object Composite (Async)**: Combine images with AI-generated content
+- **Expand Image (Async)**: Expand images beyond their original boundaries
+- **Fill Image (Async)**: Fill masked areas of an image with AI-generated content
+- **Generate Video (Async)**: Create AI-generated videos from text prompts
+- **Get Job Status**: Check the status of any asynchronous job (image/video generation)
+- **Cancel Job**: Cancel a pending or running asynchronous job
+- **Upload Image**: Upload images to Adobe's storage for use in other operations
 
 ## Credentials
 
@@ -45,6 +53,24 @@ To use this node, you need Adobe Firefly API credentials: `client id` and `clien
    - **Scopes**: Space or comma-separated list of scopes
 
 The node automatically handles IMS (Adobe Identity Management System) authentication and token refresh.
+
+## AI Agent Workflows
+
+This node is optimized for use with n8n's AI Agent workflows:
+
+- **Prompt Validation**: Automatic validation ensures prompts stay within API limits (1-1024 characters)
+- **Clear Error Messages**: Descriptive errors help agents understand and correct issues
+- **Structured Outputs**: All operations return well-formed JSON suitable for agent parsing
+- **Binary Data Handling**: Upload Image operation works seamlessly with chat message attachments
+
+### Tips for Agent Workflows
+
+1. **Image Upload**: When using with chat agents, ensure the previous node outputs binary data with a `Binary_Property` field
+2. **Job Polling**: Use the Get Job Status operation in loops to wait for async jobs to complete
+3. **Error Handling**: Enable "Continue on Fail" to allow agents to retry with corrected inputs
+4. **Style Consistency**: Use seeds to generate consistent results across multiple agent calls
+
+See the [sample-workflows](./sample-workflows) directory for pre-configured agent workflow examples.
 
 ## Compatibility
 
@@ -101,15 +127,42 @@ see: [sample-workflows](./sample-workflows)
 
 ```
 n8n-nodes-adobe-firefly/
-├── credentials/          # Credential types
-│   └── FireflyServicesApi.credentials.ts
-├── nodes/               # Node implementations
+├── .cursor/             # Cursor IDE rules and schemas
+│   ├── rules/          # Development guidelines
+│   └── schema/         # OpenAPI specifications
+├── clients/            # API client libraries
+│   ├── ffs-client.ts   # Firefly Services API client
+│   ├── ims-client.ts   # Adobe IMS authentication
+│   └── ffs-gen-image-job.d.ts  # Type definitions
+├── credentials/        # Credential types
+│   └── AdobeFireflyApi.credentials.ts
+├── nodes/             # Node implementations
 │   └── FireflyServices/
-│       ├── FireflyServices.node.ts
-│       └── FireflyServices.node.json
-├── package.json         # Package configuration
-└── tsconfig.json       # TypeScript configuration
+│       ├── FireflyServices.node.ts  # Main node definition
+│       └── exec/                    # Operation handlers
+│           ├── generateImagesAsync.ts
+│           ├── expandImageAsync.ts
+│           ├── fillImageAsync.ts
+│           ├── generateSimilarImagesAsync.ts
+│           ├── generateObjectCompositeAsync.ts
+│           ├── generateVideoAsync.ts
+│           ├── getJobStatus.ts
+│           ├── cancelJob.ts
+│           ├── uploadImage.ts
+│           └── index.ts
+├── sample-workflows/  # Pre-built workflow examples
+├── package.json      # Package configuration
+└── tsconfig.json    # TypeScript configuration
 ```
+
+### Architecture
+
+The node is built with a modular architecture:
+
+- **Client Layer**: Separate clients for Firefly API (`ffs-client.ts`) and IMS authentication (`ims-client.ts`)
+- **Operation Handlers**: Each operation is in its own file under `exec/` for better maintainability
+- **Type Safety**: Full TypeScript types for all API requests and responses
+- **Auto Authentication**: IMS client handles OAuth token management and refresh automatically
 
 ## Resources
 
