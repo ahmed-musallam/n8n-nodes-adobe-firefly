@@ -14,7 +14,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.3,
-      "position": [768, 240],
+      "position": [768, 288],
       "id": "ca1ca89a-c377-4152-aeff-8de281a46779",
       "name": "When chat message received",
       "webhookId": "9c9c12a8-230f-41ef-99d9-b7e2e877a11a",
@@ -32,26 +32,9 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
-      "position": [1624, 240],
+      "position": [1632, 288],
       "id": "b737c561-665e-40ec-8e8a-83a961999fb9",
       "name": "AI Agent"
-    },
-    {
-      "parameters": {
-        "operation": "getJobStatus",
-        "jobId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Job_ID', ``, 'string') }}"
-      },
-      "type": "CUSTOM.fireflyServicesTool",
-      "typeVersion": 1,
-      "position": [1248, 464],
-      "id": "fc7058d6-935a-4576-a3eb-b99d68f4181e",
-      "name": "Gen Image Job Status",
-      "credentials": {
-        "fireflyServicesApi": {
-          "id": "FCkqkLfuqPOyRdv4",
-          "name": "Firefly Services account"
-        }
-      }
     },
     {
       "parameters": {
@@ -60,7 +43,7 @@
       },
       "type": "CUSTOM.fireflyServicesTool",
       "typeVersion": 1,
-      "position": [1376, 464],
+      "position": [1376, 512],
       "id": "3fc705bb-a013-455c-b85c-3903cdcb514f",
       "name": "Upload Image",
       "credentials": {
@@ -80,7 +63,7 @@
       },
       "type": "n8n-nodes-base.s3Tool",
       "typeVersion": 1,
-      "position": [1504, 464],
+      "position": [1504, 512],
       "id": "942cdd4a-4432-4696-96ac-fbeaf0efa639",
       "name": "Upload a file in S3",
       "credentials": {
@@ -97,7 +80,7 @@
       },
       "type": "n8n-nodes-base.s3Tool",
       "typeVersion": 1,
-      "position": [1632, 464],
+      "position": [1632, 512],
       "id": "a452aff7-e10d-4365-9340-d13b8fceb5b0",
       "name": "Download a file in S3",
       "credentials": {
@@ -130,7 +113,7 @@
       },
       "type": "CUSTOM.fireflyServicesTool",
       "typeVersion": 1,
-      "position": [1760, 464],
+      "position": [1760, 512],
       "id": "1666b83a-658d-43d6-aa35-2c2c51ce16a0",
       "name": "Gen Image",
       "credentials": {
@@ -146,7 +129,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
-      "position": [1120, 464],
+      "position": [1120, 512],
       "id": "5c1d6c41-e63f-4198-8b6b-a2339e2737e8",
       "name": "Simple Memory"
     },
@@ -161,7 +144,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
-      "position": [992, 464],
+      "position": [992, 512],
       "id": "897b1ef5-ed05-4a08-8c6d-1b35c63df00a",
       "name": "OpenAI Chat Model",
       "credentials": {
@@ -189,7 +172,7 @@
       },
       "type": "CUSTOM.fireflyServicesTool",
       "typeVersion": 1,
-      "position": [1888, 464],
+      "position": [1888, 512],
       "id": "394c4008-f056-4e29-b564-9fd457330c9d",
       "name": "Gen Video",
       "credentials": {
@@ -218,7 +201,7 @@
       },
       "type": "CUSTOM.fireflyServicesTool",
       "typeVersion": 1,
-      "position": [2016, 464],
+      "position": [2016, 512],
       "id": "523a6744-73f7-4fd1-9bcb-5009fd488eb1",
       "name": "Gen Expand",
       "credentials": {
@@ -245,7 +228,7 @@
       },
       "type": "CUSTOM.fireflyServicesTool",
       "typeVersion": 1,
-      "position": [2144, 464],
+      "position": [2144, 512],
       "id": "51002428-138e-4dc1-8519-28f43612c33b",
       "name": "Gen Fill",
       "credentials": {
@@ -266,7 +249,7 @@
       },
       "type": "CUSTOM.fireflyServicesTool",
       "typeVersion": 1,
-      "position": [2272, 464],
+      "position": [2272, 512],
       "id": "f49afc6d-2d9a-472d-8ef5-43d2a53a3910",
       "name": "Gen Similar",
       "credentials": {
@@ -297,9 +280,26 @@
       },
       "type": "CUSTOM.fireflyServicesTool",
       "typeVersion": 1,
-      "position": [2400, 464],
+      "position": [2400, 512],
       "id": "1b4826c7-da55-4312-8496-74489f374e16",
       "name": "Gen Object Composite",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getJobStatus",
+        "jobId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Job_ID', ``, 'string') }}"
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [1248, 512],
+      "id": "fc7058d6-935a-4576-a3eb-b99d68f4181e",
+      "name": "Job Status",
       "credentials": {
         "fireflyServicesApi": {
           "id": "FCkqkLfuqPOyRdv4",
@@ -322,17 +322,6 @@
     },
     "AI Agent": {
       "main": [[]]
-    },
-    "Gen Image Job Status": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
     },
     "Upload Image": {
       "ai_tool": [
@@ -445,6 +434,17 @@
       ]
     },
     "Gen Object Composite": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Status": {
       "ai_tool": [
         [
           {
