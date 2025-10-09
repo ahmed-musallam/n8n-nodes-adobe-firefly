@@ -3,6 +3,7 @@
  *
  * Implements:
  * - /v3/images/generate-async (image generation)
+ * - /v3/images/expand-async (image expansion)
  * - /v3/videos/generate (video generation)
  * - /v3/status/{jobId} (job status polling)
  * - /v3/cancel/{jobId} (job cancellation)
@@ -12,6 +13,7 @@
  *
  * References:
  * - .cursor/schema/image_generation_async_v3.json
+ * - .cursor/schema/generative_expand_async_v3.json
  * - .cursor/schema/generate_video_api.json
  * - .cursor/rules/adobe-firefly-api.md
  */
@@ -105,6 +107,49 @@ export type GenerateVideoV3AsyncResponse = {
 };
 
 export type VideoModelVersion = "video1_standard";
+
+export type ExpandImageV3AsyncRequest = {
+  // See OpenAPI: #/components/schemas/ExpandImageRequestV3
+  image: {
+    source: {
+      uploadId?: string;
+      url?: string;
+    };
+  };
+  mask?: {
+    source: {
+      uploadId?: string;
+      url?: string;
+    };
+    invert?: boolean;
+  };
+  numVariations?: number; // 1-4
+  placement?: {
+    alignment?: {
+      horizontal?: "center" | "left" | "right";
+      vertical?: "center" | "top" | "bottom";
+    };
+    inset?: {
+      top?: number;
+      right?: number;
+      bottom?: number;
+      left?: number;
+    };
+  };
+  prompt?: string; // 1-1024 characters
+  seeds?: number[]; // 1-4 items
+  size?: {
+    width: number; // 1-3999
+    height: number; // 1-3999
+  };
+};
+
+export type ExpandImageV3AsyncResponse = {
+  // See OpenAPI: #/components/schemas/AsyncAcceptResponseV3
+  jobId: string;
+  statusUrl: string;
+  cancelUrl: string;
+};
 
 export type FireflyClientOptions = {
   imsClient: IMSClient;
@@ -317,6 +362,45 @@ export class FireflyClient {
     }
 
     const data = (await response.json()) as GenerateVideoV3AsyncResponse;
+    if (!data.jobId) {
+      throw new Error("Firefly API response missing jobId");
+    }
+    return data;
+  }
+
+  /**
+   * Expand an image asynchronously (V3).
+   * Implements the POST /v3/images/expand-async endpoint per generative_expand_async_v3.json.
+   * Change the aspect ratio or size of an image and expand it with optional text prompt.
+   *
+   * @param requestBody - The request payload (see OpenAPI spec for details)
+   * @returns The async job response (contains jobId, statusUrl, cancelUrl)
+   * @throws Error if the API call fails
+   */
+  async expandImageAsync(
+    requestBody: ExpandImageV3AsyncRequest,
+  ): Promise<ExpandImageV3AsyncResponse> {
+    const url = `${this.baseUrl}/v3/images/expand-async`;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(await this.imsClient.getAuthHeaders()),
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Firefly expandImageAsync failed: ${response.status} ${response.statusText} - ${errorText}`,
+      );
+    }
+
+    const data = (await response.json()) as ExpandImageV3AsyncResponse;
     if (!data.jobId) {
       throw new Error("Firefly API response missing jobId");
     }

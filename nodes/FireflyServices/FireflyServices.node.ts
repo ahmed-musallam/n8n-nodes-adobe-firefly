@@ -12,6 +12,7 @@ import {
 import { IMSClient } from "../../clients/ims-client";
 import { FireflyClient } from "../../clients/ffs-client";
 import {
+  executeExpandImageAsync,
   executeGenerateImagesAsync,
   executeGenerateVideoAsync,
   executeGetJobStatus,
@@ -55,6 +56,13 @@ export class FireflyServices implements INodeType {
             value: "cancelJob",
             description: "Cancel an async job",
             action: "Cancel async job",
+          },
+          {
+            name: "Expand Image (Async)",
+            value: "expandImageAsync",
+            description:
+              "Change aspect ratio or size of an image and expand it",
+            action: "Expand image with optional prompt",
           },
           {
             name: "Generate Images (Async)",
@@ -431,6 +439,176 @@ export class FireflyServices implements INodeType {
           },
         ],
       },
+      // Expand Image Async parameters
+      {
+        displayName: "Source Image Upload ID",
+        name: "sourceImageUploadId",
+        type: "string",
+        required: true,
+        default: "",
+        placeholder: "123e4567-e89b-12d3-a456-426614174000",
+        description: "Upload ID from storage API of the image to expand",
+        displayOptions: {
+          show: {
+            operation: ["expandImageAsync"],
+          },
+        },
+      },
+      {
+        displayName: "Expand Options",
+        name: "expandOptions",
+        type: "collection",
+        placeholder: "Add Option",
+        default: {},
+        displayOptions: {
+          show: {
+            operation: ["expandImageAsync"],
+          },
+        },
+        options: [
+          {
+            displayName: "Height",
+            name: "height",
+            type: "number",
+            default: 2048,
+            typeOptions: {
+              minValue: 1,
+              maxValue: 4096,
+            },
+            description: "Output image height in pixels (1-4096)",
+          },
+          {
+            displayName: "Horizontal Alignment",
+            name: "horizontalAlignment",
+            type: "options",
+            options: [
+              { name: "Center", value: "center" },
+              { name: "Left", value: "left" },
+              { name: "Right", value: "right" },
+            ],
+            default: "center",
+            description:
+              "Horizontal placement of source image in expanded canvas",
+          },
+          {
+            displayName: "Inset Bottom",
+            name: "insetBottom",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+            },
+            description: "Margin from bottom edge in pixels",
+          },
+          {
+            displayName: "Inset Left",
+            name: "insetLeft",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+            },
+            description: "Margin from left edge in pixels",
+          },
+          {
+            displayName: "Inset Right",
+            name: "insetRight",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+            },
+            description: "Margin from right edge in pixels",
+          },
+          {
+            displayName: "Inset Top",
+            name: "insetTop",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+            },
+            description: "Margin from top edge in pixels",
+          },
+          {
+            displayName: "Invert Mask",
+            name: "invertMask",
+            type: "boolean",
+            default: false,
+            description: "Whether to invert the mask image",
+            displayOptions: {
+              show: {
+                "/expandOptions.maskUploadId": [{ _cnd: { not: "" } }],
+              },
+            },
+          },
+          {
+            displayName: "Mask Upload ID",
+            name: "maskUploadId",
+            type: "string",
+            default: "",
+            placeholder: "123e4567-e89b-12d3-a456-426614174000",
+            description: "Upload ID of mask image for selective expansion",
+          },
+          {
+            displayName: "Number of Variations",
+            name: "numVariations",
+            type: "number",
+            default: 1,
+            typeOptions: {
+              minValue: 1,
+              maxValue: 4,
+            },
+            description: "Number of variations to generate (1-4)",
+          },
+          {
+            displayName: "Prompt",
+            name: "prompt",
+            type: "string",
+            default: "",
+            placeholder: "Pine trees and a forest landscape",
+            description:
+              "Optional text prompt (1-1024 characters) to guide the expansion",
+            typeOptions: {
+              rows: 3,
+              maxValue: 1024,
+            },
+          },
+          {
+            displayName: "Seeds",
+            name: "seeds",
+            type: "string",
+            default: "",
+            placeholder: "12345, 67890",
+            description:
+              "Comma-separated seed image IDs for consistent generation. Must match numVariations if specified.",
+          },
+          {
+            displayName: "Vertical Alignment",
+            name: "verticalAlignment",
+            type: "options",
+            options: [
+              { name: "Center", value: "center" },
+              { name: "Top", value: "top" },
+              { name: "Bottom", value: "bottom" },
+            ],
+            default: "center",
+            description:
+              "Vertical placement of source image in expanded canvas",
+          },
+          {
+            displayName: "Width",
+            name: "width",
+            type: "number",
+            default: 2048,
+            typeOptions: {
+              minValue: 1,
+              maxValue: 4096,
+            },
+            description: "Output image width in pixels (1-4096)",
+          },
+        ],
+      },
       // Generate Video Async parameters
       {
         displayName: "Prompt",
@@ -704,7 +882,13 @@ export class FireflyServices implements INodeType {
 
         let responseData: IDataObject = {};
 
-        if (operation === "generateImagesAsync") {
+        if (operation === "expandImageAsync") {
+          responseData = await executeExpandImageAsync.call(
+            this,
+            i,
+            fireflyClient,
+          );
+        } else if (operation === "generateImagesAsync") {
           responseData = await executeGenerateImagesAsync.call(
             this,
             i,
