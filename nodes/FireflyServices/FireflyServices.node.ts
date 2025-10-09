@@ -8,14 +8,15 @@ import {
   LoggerProxy as Logger,
   ApplicationError,
 } from "n8n-workflow";
-import { readFile } from "fs/promises";
 
 import { IMSClient } from "../../clients/ims-client";
+import { FireflyClient } from "../../clients/ffs-client";
 import {
-  FireflyClient,
-  type GenerateImagesV3AsyncRequest,
-  type ModelVersion,
-} from "../../clients/ffs-client";
+  executeGenerateImagesAsync,
+  executeGetJobStatus,
+  executeCancelJob,
+  executeUploadImage,
+} from "./exec";
 
 export class FireflyServices implements INodeType {
   description: INodeTypeDescription = {
@@ -418,7 +419,7 @@ export class FireflyServices implements INodeType {
               maxValue: 10,
             },
             description:
-              "minimum 2 maximum 10, Adjust overall intensity (contrast, shadow, hue). Not supported with image4_custom.",
+              "Minimum 2 maximum 10, Adjust overall intensity (contrast, shadow, hue). Not supported with image4_custom.",
           },
         ],
       },
@@ -543,303 +544,17 @@ export class FireflyServices implements INodeType {
         let responseData: IDataObject = {};
 
         if (operation === "generateImagesAsync") {
-          const prompt = this.getNodeParameter("prompt", i) as string;
-          const modelVersion = this.getNodeParameter(
-            "modelVersion",
+          responseData = await executeGenerateImagesAsync.call(
+            this,
             i,
-          ) as ModelVersion;
-
-          // Validate prompt length
-          const MAX_PROMPT_LENGTH = 1024;
-          if (prompt.length > MAX_PROMPT_LENGTH) {
-            throw new ApplicationError(
-              `Prompt exceeds maximum length of ${MAX_PROMPT_LENGTH} characters (current: ${prompt.length} characters). Please shorten your prompt.`,
-            );
-          }
-
-          if (prompt.length < 1) {
-            throw new ApplicationError(
-              "Prompt must be at least 1 character long.",
-            );
-          }
-          const {
-            imageSize,
-            contentClass,
-            customModelId,
-            numVariations,
-            negativePrompt,
-            seeds,
-            structureReference,
-            styleReference,
-            upsamplerType,
-            visualIntensity,
-          } = this.getNodeParameter("additionalOptions", i, {}) as IDataObject;
-
-          // Validate negative prompt length
-          if (negativePrompt && typeof negativePrompt === "string") {
-            if (negativePrompt.length > MAX_PROMPT_LENGTH) {
-              throw new ApplicationError(
-                `Negative prompt exceeds maximum length of ${MAX_PROMPT_LENGTH} characters (current: ${negativePrompt.length} characters). Please shorten your negative prompt.`,
-              );
-            }
-          }
-
-          const parseSize = (size: string) => {
-            const [width, height] = size.split("x").map(Number);
-            return { width, height };
-          };
-
-          // Parse seeds from comma-separated string to array of integers
-          const parsedSeeds = seeds
-            ? (seeds as string)
-                .split(",")
-                .map((s) => parseInt(s.trim(), 10))
-                .filter((n) => !isNaN(n))
-            : undefined;
-
-          // Build structure reference object
-          let structure;
-          if (
-            structureReference &&
-            Object.keys(structureReference as object).length > 0
-          ) {
-            const structRef = structureReference as IDataObject;
-            const sourceType = structRef.sourceType as string;
-            const source: IDataObject = {};
-
-            if (sourceType === "url" && structRef.url) {
-              source.url = structRef.url;
-            } else if (sourceType === "uploadId" && structRef.uploadId) {
-              source.uploadId = structRef.uploadId;
-            }
-
-            if (Object.keys(source).length > 0) {
-              structure = {
-                imageReference: { source },
-                ...(structRef.strength !== undefined && {
-                  strength: structRef.strength,
-                }),
-              };
-            }
-          }
-
-          // Build style reference object
-          let style;
-          if (
-            styleReference &&
-            Object.keys(styleReference as object).length > 0
-          ) {
-            const styleRef = styleReference as IDataObject;
-            const sourceType = styleRef.sourceType as string;
-            const source: IDataObject = {};
-
-            if (sourceType === "url" && styleRef.url) {
-              source.url = styleRef.url;
-            } else if (sourceType === "uploadId" && styleRef.uploadId) {
-              source.uploadId = styleRef.uploadId;
-            }
-
-            if (Object.keys(source).length > 0) {
-              style = {
-                imageReference: { source },
-                ...(styleRef.strength !== undefined && {
-                  strength: styleRef.strength,
-                }),
-                ...(styleRef.presets && {
-                  presets: (styleRef.presets as string)
-                    .split(",")
-                    .map((p) => p.trim())
-                    .filter((p) => p.length > 0),
-                }),
-              };
-            }
-          }
-
-          // Build request body
-          const requestBody: GenerateImagesV3AsyncRequest = {
-            prompt,
-            size: imageSize ? parseSize(imageSize as string) : undefined,
-            contentClass: contentClass as string,
-            customModelId: customModelId as string,
-            numVariations: numVariations as number,
-            negativePrompt: negativePrompt as string,
-            seeds: parsedSeeds,
-            structure,
-            style,
-            upsamplerType: upsamplerType as string,
-            visualIntensity: visualIntensity as number,
-          };
-
-          Logger.info("Generating images via FireflyClient...", {
-            requestBody,
-          });
-
-          const response = await fireflyClient.generateImagesAsync(
-            requestBody,
-            modelVersion,
+            fireflyClient,
           );
-          responseData = response as unknown as IDataObject;
-
-          Logger.info("Generate images response:", { responseData });
         } else if (operation === "getJobStatus") {
-          const jobId = this.getNodeParameter("jobId", i) as string;
-
-          Logger.info("Getting job status via FireflyClient...", { jobId });
-
-          const response = await fireflyClient.getJobStatus(jobId);
-          responseData = response as unknown as IDataObject;
-
-          Logger.info("Job status response:", { responseData });
+          responseData = await executeGetJobStatus.call(this, i, fireflyClient);
         } else if (operation === "cancelJob") {
-          const jobId = this.getNodeParameter("jobId", i) as string;
-
-          Logger.info("Canceling job via HTTP request...", { jobId });
-
-          await fireflyClient.cancelJob(jobId);
-
-          Logger.info("Job canceled successfully");
+          responseData = await executeCancelJob.call(this, i, fireflyClient);
         } else if (operation === "uploadImage") {
-          const inputType = this.getNodeParameter("inputType", i) as string;
-
-          Logger.info("Uploading image via FireflyClient...", { inputType });
-
-          let binaryDataBuffer: Buffer | undefined;
-          let detectedMimeType = "";
-
-          if (inputType === "binary") {
-            const item = items[i];
-
-            // Get binary property name from JSON field or use default
-            const binaryProperty =
-              (item.json?.Binary_Property as string) ||
-              (this.getNodeParameter("binaryProperty", i, "data") as string) ||
-              "data";
-
-            Logger.info("Getting binary data from property:", {
-              binaryProperty,
-            });
-
-            // Get binary data
-            const binaryData = this.helpers.assertBinaryData(i, binaryProperty);
-            binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
-              i,
-              binaryProperty,
-            );
-            detectedMimeType = binaryData.mimeType?.toLowerCase() || "";
-
-            Logger.info("Binary data retrieved:", {
-              mimeType: detectedMimeType,
-              size: binaryDataBuffer.length,
-            });
-          } else if (inputType === "url") {
-            // Download from URL
-            const imageUrl = this.getNodeParameter("imageUrl", i) as string;
-
-            if (!imageUrl || !imageUrl.startsWith("http")) {
-              throw new ApplicationError(
-                `Invalid image URL: "${imageUrl}". Must be a valid HTTP or HTTPS URL.`,
-                { level: "warning" },
-              );
-            }
-
-            Logger.info("Downloading image from URL...", { imageUrl });
-
-            const response = await this.helpers.httpRequest({
-              method: "GET",
-              url: imageUrl,
-              encoding: "arraybuffer",
-              returnFullResponse: true,
-            });
-
-            binaryDataBuffer = Buffer.from(response.body as ArrayBuffer);
-            detectedMimeType =
-              (response.headers["content-type"] as string)?.toLowerCase() || "";
-
-            Logger.info("Image downloaded", {
-              size: binaryDataBuffer.length,
-              contentType: detectedMimeType,
-            });
-          } else if (inputType === "filePath") {
-            // Read from file path
-            const filePath = this.getNodeParameter("filePath", i) as string;
-
-            if (!filePath) {
-              throw new ApplicationError(
-                "File path is required when using 'File Path' input type.",
-                { level: "warning" },
-              );
-            }
-
-            Logger.info("Reading image from file path...", { filePath });
-
-            try {
-              binaryDataBuffer = await readFile(filePath);
-
-              // Detect MIME type from file extension
-              const ext = filePath.toLowerCase().split(".").pop();
-              if (ext === "jpg" || ext === "jpeg") {
-                detectedMimeType = "image/jpeg";
-              } else if (ext === "png") {
-                detectedMimeType = "image/png";
-              } else if (ext === "webp") {
-                detectedMimeType = "image/webp";
-              }
-
-              Logger.info("Image read from file", {
-                size: binaryDataBuffer.length,
-                detectedMimeType,
-              });
-            } catch (error) {
-              throw new ApplicationError(
-                `Failed to read image file: ${(error as Error).message}`,
-                { level: "warning" },
-              );
-            }
-          } else {
-            throw new ApplicationError(`Unknown input type: ${inputType}`, {
-              level: "warning",
-            });
-          }
-
-          // Ensure we have binary data buffer at this point
-          if (!binaryDataBuffer) {
-            throw new ApplicationError(
-              "Failed to retrieve image data. Please check the input and try again.",
-              { level: "warning" },
-            );
-          }
-
-          // Auto-detect content type from MIME type
-          let contentType: "image/jpeg" | "image/png" | "image/webp";
-
-          if (
-            detectedMimeType.includes("jpeg") ||
-            detectedMimeType.includes("jpg")
-          ) {
-            contentType = "image/jpeg";
-          } else if (detectedMimeType.includes("png")) {
-            contentType = "image/png";
-          } else if (detectedMimeType.includes("webp")) {
-            contentType = "image/webp";
-          } else {
-            throw new ApplicationError(
-              `Unsupported image format: ${detectedMimeType}. Adobe Firefly only supports JPEG, PNG, and WebP formats.`,
-              { level: "warning" },
-            );
-          }
-
-          Logger.info("Uploading to Firefly...", {
-            contentType,
-            size: binaryDataBuffer.length,
-          });
-
-          const response = await fireflyClient.uploadImage(
-            binaryDataBuffer,
-            contentType,
-          );
-          responseData = response as unknown as IDataObject;
-
-          Logger.info("Upload image response:", { responseData });
+          responseData = await executeUploadImage.call(this, i, fireflyClient);
         } else {
           throw new ApplicationError(`Unknown operation: ${operation}`);
         }
