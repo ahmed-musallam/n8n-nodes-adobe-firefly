@@ -13,6 +13,7 @@ import { IMSClient } from "../../clients/ims-client";
 import { FireflyClient } from "../../clients/ffs-client";
 import {
   executeGenerateImagesAsync,
+  executeGenerateVideoAsync,
   executeGetJobStatus,
   executeCancelJob,
   executeUploadImage,
@@ -60,6 +61,13 @@ export class FireflyServices implements INodeType {
             value: "generateImagesAsync",
             description: "Generate images from text prompt asynchronously",
             action: "Generate images from text prompt",
+          },
+          {
+            name: "Generate Video (Async)",
+            value: "generateVideoAsync",
+            description:
+              "Generate a 5-second video from text prompt asynchronously",
+            action: "Generate video from text prompt",
           },
           {
             name: "Get Job Status",
@@ -423,6 +431,159 @@ export class FireflyServices implements INodeType {
           },
         ],
       },
+      // Generate Video Async parameters
+      {
+        displayName: "Prompt",
+        name: "videoPrompt",
+        type: "string",
+        required: true,
+        default: "",
+        placeholder: "A lone figure in a desert looking at the sky",
+        description:
+          "Text description of the video to generate. The longer the prompt, the better.",
+        typeOptions: {
+          rows: 4,
+        },
+        displayOptions: {
+          show: {
+            operation: ["generateVideoAsync"],
+          },
+        },
+      },
+      {
+        displayName: "Video Options",
+        name: "videoOptions",
+        type: "collection",
+        placeholder: "Add Option",
+        default: {},
+        displayOptions: {
+          show: {
+            operation: ["generateVideoAsync"],
+          },
+        },
+        options: [
+          {
+            displayName: "Bit Rate Factor",
+            name: "bitRateFactor",
+            type: "number",
+            default: 18,
+            typeOptions: {
+              minValue: 0,
+              maxValue: 63,
+            },
+            description:
+              "Constant rate factor for encoding. 0 = lossless (largest file), 63 = worst quality (smallest file). Suggested range: 17-23.",
+          },
+          {
+            displayName: "Camera Motion",
+            name: "cameraMotion",
+            type: "options",
+            options: [
+              { name: "Camera Handheld", value: "camera handheld" },
+              { name: "Camera Locked Down", value: "camera locked down" },
+              { name: "Camera Pan Left", value: "camera pan left" },
+              { name: "Camera Pan Right", value: "camera pan right" },
+              { name: "Camera Tilt Down", value: "camera tilt down" },
+              { name: "Camera Tilt Up", value: "camera tilt up" },
+              { name: "Camera Zoom In", value: "camera zoom in" },
+              { name: "Camera Zoom Out", value: "camera zoom out" },
+            ],
+            default: "camera locked down",
+            description: "Camera movement control for the video",
+          },
+          {
+            displayName: "Keyframe Image Upload ID",
+            name: "keyframeUploadId",
+            type: "string",
+            default: "",
+            placeholder: "123e4567-e89b-12d3-a456-426614174000",
+            description:
+              "Upload ID from storage API to use as keyframe (first or last frame)",
+          },
+          {
+            displayName: "Keyframe Position",
+            name: "keyframePosition",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+              maxValue: 1,
+              numberPrecision: 2,
+            },
+            description:
+              "Position of keyframe: 0 = first frame, 1 = last frame",
+            displayOptions: {
+              show: {
+                "/videoOptions.keyframeUploadId": [{ _cnd: { not: "" } }],
+              },
+            },
+          },
+          {
+            displayName: "Prompt Style",
+            name: "promptStyle",
+            type: "options",
+            options: [
+              { name: "2D", value: "2d" },
+              { name: "3D", value: "3d" },
+              { name: "Anime", value: "anime" },
+              { name: "Black and White", value: "black and white" },
+              { name: "Cinematic", value: "cinematic" },
+              { name: "Claymation", value: "claymation" },
+              { name: "Fantasy", value: "fantasy" },
+              { name: "Line Art", value: "line art" },
+              { name: "Stop Motion", value: "stop motion" },
+              { name: "Vector Art", value: "vector art" },
+            ],
+            default: "cinematic",
+            description: "Visual style of the generated video",
+          },
+          {
+            displayName: "Seed",
+            name: "seed",
+            type: "number",
+            default: "",
+            placeholder: "1842533538",
+            description:
+              "Seed for reproducible generation (currently only 1 seed supported)",
+          },
+          {
+            displayName: "Shot Angle",
+            name: "shotAngle",
+            type: "options",
+            options: [
+              { name: "Aerial Shot", value: "aerial shot" },
+              { name: "Eye Level Shot", value: "eye_level shot" },
+              { name: "High Angle Shot", value: "high angle shot" },
+              { name: "Low Angle Shot", value: "low angle shot" },
+              { name: "Top-Down Shot", value: "top-down shot" },
+            ],
+            default: "eye_level shot",
+            description: "Camera angle for the video",
+          },
+          {
+            displayName: "Shot Size",
+            name: "shotSize",
+            type: "options",
+            options: [
+              { name: "Close-Up Shot", value: "close-up shot" },
+              { name: "Extreme Close-Up", value: "extreme close-up" },
+              { name: "Extreme Long Shot", value: "extreme long shot" },
+              { name: "Long Shot", value: "long shot" },
+              { name: "Medium Shot", value: "medium shot" },
+            ],
+            default: "medium shot",
+            description: "Framing of the shot",
+          },
+          {
+            displayName: "Video Size",
+            name: "videoSize",
+            type: "options",
+            options: [{ name: "720x720 (1:1 Square)", value: "720x720" }],
+            default: "720x720",
+            description: "Output video dimensions",
+          },
+        ],
+      },
       // Get Job Status parameters
       {
         displayName: "Job ID",
@@ -545,6 +706,12 @@ export class FireflyServices implements INodeType {
 
         if (operation === "generateImagesAsync") {
           responseData = await executeGenerateImagesAsync.call(
+            this,
+            i,
+            fireflyClient,
+          );
+        } else if (operation === "generateVideoAsync") {
+          responseData = await executeGenerateVideoAsync.call(
             this,
             i,
             fireflyClient,

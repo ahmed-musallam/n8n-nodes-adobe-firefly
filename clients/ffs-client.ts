@@ -1,10 +1,19 @@
 /**
- * Firefly API Client (Async Image Generation V3)
+ * Firefly API Client (Image & Video Generation)
  *
- * Implements the /v3/images/generate-async endpoint using IMS authentication.
+ * Implements:
+ * - /v3/images/generate-async (image generation)
+ * - /v3/videos/generate (video generation)
+ * - /v3/status/{jobId} (job status polling)
+ * - /v3/cancel/{jobId} (job cancellation)
+ * - /v2/storage/image (image upload)
  *
- * Reference: .cursor/schema/image_generation_async_v3.json
- * See also: .cursor/rules/adobe-firefly-api.md
+ * All endpoints use IMS authentication.
+ *
+ * References:
+ * - .cursor/schema/image_generation_async_v3.json
+ * - .cursor/schema/generate_video_api.json
+ * - .cursor/rules/adobe-firefly-api.md
  */
 
 import { GenerateImageJobResponse } from "./ffs-gen-image-job";
@@ -30,6 +39,72 @@ export type UploadImageResponse = {
     id: string;
   }>;
 };
+
+export type GenerateVideoV3AsyncRequest = {
+  // See OpenAPI: #/components/schemas/GenerateVideoRequestV3
+  prompt?: string;
+  bitRateFactor?: number; // 0-63, default 18
+  image?: {
+    conditions?: Array<{
+      source: {
+        uploadId?: string;
+        url?: string;
+        creativeCloudFileId?: string;
+      };
+      placement: {
+        position: number; // 0-1, 0 = first frame, 1 = last frame
+      };
+    }>;
+  };
+  seeds?: number[]; // max 1 seed currently supported
+  sizes?: Array<{
+    width: number;
+    height: number;
+  }>;
+  videoSettings?: {
+    cameraMotion?:
+      | "camera pan left"
+      | "camera pan right"
+      | "camera zoom in"
+      | "camera zoom out"
+      | "camera tilt up"
+      | "camera tilt down"
+      | "camera locked down"
+      | "camera handheld";
+    promptStyle?:
+      | "anime"
+      | "3d"
+      | "fantasy"
+      | "cinematic"
+      | "claymation"
+      | "line art"
+      | "stop motion"
+      | "2d"
+      | "vector art"
+      | "black and white";
+    shotAngle?:
+      | "aerial shot"
+      | "eye_level shot"
+      | "high angle shot"
+      | "low angle shot"
+      | "top-down shot";
+    shotSize?:
+      | "close-up shot"
+      | "extreme close-up"
+      | "medium shot"
+      | "long shot"
+      | "extreme long shot";
+  };
+};
+
+export type GenerateVideoV3AsyncResponse = {
+  // See OpenAPI: 202 response for /v3/videos/generate
+  jobId: string;
+  statusUrl: string;
+  cancelUrl: string;
+};
+
+export type VideoModelVersion = "video1_standard";
 
 export type FireflyClientOptions = {
   imsClient: IMSClient;
@@ -201,6 +276,49 @@ export class FireflyClient {
     const data = (await response.json()) as UploadImageResponse;
     if (!data.images || data.images.length === 0) {
       throw new Error("Firefly API response missing image IDs");
+    }
+    return data;
+  }
+
+  /**
+   * Generate a video asynchronously (V3).
+   * Implements the POST /v3/videos/generate endpoint per generate_video_api.json.
+   *
+   * @param requestBody - The request payload (see OpenAPI spec for details)
+   * @param modelVersion - Optional Firefly video model version (header: x-model-version)
+   * @returns The async job response (contains jobId, statusUrl, cancelUrl)
+   * @throws Error if the API call fails
+   */
+  async generateVideoAsync(
+    requestBody: GenerateVideoV3AsyncRequest,
+    modelVersion?: VideoModelVersion,
+  ): Promise<GenerateVideoV3AsyncResponse> {
+    const url = `${this.baseUrl}/v3/videos/generate`;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(await this.imsClient.getAuthHeaders()),
+    };
+    if (modelVersion) {
+      headers["x-model-version"] = modelVersion;
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Firefly generateVideoAsync failed: ${response.status} ${response.statusText} - ${errorText}`,
+      );
+    }
+
+    const data = (await response.json()) as GenerateVideoV3AsyncResponse;
+    if (!data.jobId) {
+      throw new Error("Firefly API response missing jobId");
     }
     return data;
   }
