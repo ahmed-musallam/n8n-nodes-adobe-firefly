@@ -13,6 +13,7 @@ import { IMSClient } from "../../clients/ims-client";
 import { FireflyClient } from "../../clients/ffs-client";
 import {
   executeExpandImageAsync,
+  executeFillImageAsync,
   executeGenerateImagesAsync,
   executeGenerateVideoAsync,
   executeGetJobStatus,
@@ -63,6 +64,13 @@ export class FireflyServices implements INodeType {
             description:
               "Change aspect ratio or size of an image and expand it",
             action: "Expand image with optional prompt",
+          },
+          {
+            name: "Fill Image (Async)",
+            value: "fillImageAsync",
+            description:
+              "Fill areas of an image using a mask with AI-generated content",
+            action: "Fill image with mask and prompt",
           },
           {
             name: "Generate Images (Async)",
@@ -609,6 +617,130 @@ export class FireflyServices implements INodeType {
           },
         ],
       },
+      // Fill Image Async parameters
+      {
+        displayName: "Source Image Upload ID",
+        name: "fillSourceImageUploadId",
+        type: "string",
+        required: true,
+        default: "",
+        placeholder: "123e4567-e89b-12d3-a456-426614174000",
+        description: "Upload ID from storage API of the image to fill",
+        displayOptions: {
+          show: {
+            operation: ["fillImageAsync"],
+          },
+        },
+      },
+      {
+        displayName: "Mask Upload ID",
+        name: "fillMaskUploadId",
+        type: "string",
+        required: true,
+        default: "",
+        placeholder: "123e4567-e89b-12d3-a456-426614174000",
+        description:
+          "Upload ID of mask image defining the area to fill (required)",
+        displayOptions: {
+          show: {
+            operation: ["fillImageAsync"],
+          },
+        },
+      },
+      {
+        displayName: "Fill Options",
+        name: "fillOptions",
+        type: "collection",
+        placeholder: "Add Option",
+        default: {},
+        displayOptions: {
+          show: {
+            operation: ["fillImageAsync"],
+          },
+        },
+        options: [
+          {
+            displayName: "Invert Mask",
+            name: "invertMask",
+            type: "boolean",
+            default: false,
+            description: "Whether to invert the mask image",
+          },
+          {
+            displayName: "Negative Prompt",
+            name: "negativePrompt",
+            type: "string",
+            default: "",
+            placeholder: "Avoid these characteristics",
+            description:
+              "Optional text prompt (max 1024 characters) to avoid certain characteristics",
+            typeOptions: {
+              rows: 2,
+              maxValue: 1024,
+            },
+          },
+          {
+            displayName: "Number of Variations",
+            name: "numVariations",
+            type: "number",
+            default: 1,
+            typeOptions: {
+              minValue: 1,
+              maxValue: 4,
+            },
+            description: "Number of variations to generate (1-4)",
+          },
+          {
+            displayName: "Prompt",
+            name: "prompt",
+            type: "string",
+            default: "",
+            placeholder: "A planet in space",
+            description:
+              "Optional text prompt (1-1024 characters) to guide the fill generation",
+            typeOptions: {
+              rows: 3,
+              maxValue: 1024,
+            },
+          },
+          {
+            displayName: "Prompt Biasing Locale Code",
+            name: "promptBiasingLocaleCode",
+            type: "string",
+            default: "",
+            placeholder: "en-US",
+            description:
+              "Locale code (e.g., en-US) to bias content for that region",
+          },
+          {
+            displayName: "Seeds",
+            name: "seeds",
+            type: "string",
+            default: "",
+            placeholder: "12345, 67890",
+            description:
+              "Comma-separated seed image IDs for consistent generation. Must match numVariations if specified.",
+          },
+          {
+            displayName: "Size",
+            name: "size",
+            type: "options",
+            options: [
+              { name: "1024x1024 (1:1 Square)", value: "1024x1024" },
+              { name: "1152x896 (9:7)", value: "1152x896" },
+              { name: "1344x768 (7:4)", value: "1344x768" },
+              { name: "1792x2304 (3:4 Portrait)", value: "1792x2304" },
+              { name: "2048x2048 (1:1 Square)", value: "2048x2048" },
+              { name: "2304x1792 (4:3 Landscape)", value: "2304x1792" },
+              { name: "2688x1536 (16:9 Widescreen)", value: "2688x1536" },
+              { name: "896x1152 (7:9)", value: "896x1152" },
+            ],
+            default: "2048x2048",
+            description:
+              "Output image dimensions. Supported preset sizes for fill operation.",
+          },
+        ],
+      },
       // Generate Video Async parameters
       {
         displayName: "Prompt",
@@ -884,6 +1016,12 @@ export class FireflyServices implements INodeType {
 
         if (operation === "expandImageAsync") {
           responseData = await executeExpandImageAsync.call(
+            this,
+            i,
+            fireflyClient,
+          );
+        } else if (operation === "fillImageAsync") {
+          responseData = await executeFillImageAsync.call(
             this,
             i,
             fireflyClient,

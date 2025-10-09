@@ -4,6 +4,7 @@
  * Implements:
  * - /v3/images/generate-async (image generation)
  * - /v3/images/expand-async (image expansion)
+ * - /v3/images/fill-async (image fill)
  * - /v3/videos/generate (video generation)
  * - /v3/status/{jobId} (job status polling)
  * - /v3/cancel/{jobId} (job cancellation)
@@ -14,6 +15,7 @@
  * References:
  * - .cursor/schema/image_generation_async_v3.json
  * - .cursor/schema/generative_expand_async_v3.json
+ * - .cursor/schema/generative_fill_async_v3.json
  * - .cursor/schema/generate_video_api.json
  * - .cursor/rules/adobe-firefly-api.md
  */
@@ -145,6 +147,40 @@ export type ExpandImageV3AsyncRequest = {
 };
 
 export type ExpandImageV3AsyncResponse = {
+  // See OpenAPI: #/components/schemas/AsyncAcceptResponseV3
+  jobId: string;
+  statusUrl: string;
+  cancelUrl: string;
+};
+
+export type FillImageV3AsyncRequest = {
+  // See OpenAPI: #/components/schemas/FillImageRequestV3
+  image: {
+    source: {
+      uploadId?: string;
+      url?: string;
+    };
+  };
+  mask: {
+    // Required
+    source: {
+      uploadId?: string;
+      url?: string;
+    };
+    invert?: boolean;
+  };
+  negativePrompt?: string; // max 1024 characters
+  numVariations?: number; // 1-4
+  prompt?: string; // 1-1024 characters
+  promptBiasingLocaleCode?: string;
+  seeds?: number[]; // 1-4 items
+  size?: {
+    width: number;
+    height: number;
+  };
+};
+
+export type FillImageV3AsyncResponse = {
   // See OpenAPI: #/components/schemas/AsyncAcceptResponseV3
   jobId: string;
   statusUrl: string;
@@ -401,6 +437,45 @@ export class FireflyClient {
     }
 
     const data = (await response.json()) as ExpandImageV3AsyncResponse;
+    if (!data.jobId) {
+      throw new Error("Firefly API response missing jobId");
+    }
+    return data;
+  }
+
+  /**
+   * Fill an image asynchronously (V3).
+   * Implements the POST /v3/images/fill-async endpoint per generative_fill_async_v3.json.
+   * Fills an area of an image based on a mask with AI-generated content from prompt.
+   *
+   * @param requestBody - The request payload (see OpenAPI spec for details)
+   * @returns The async job response (contains jobId, statusUrl, cancelUrl)
+   * @throws Error if the API call fails
+   */
+  async fillImageAsync(
+    requestBody: FillImageV3AsyncRequest,
+  ): Promise<FillImageV3AsyncResponse> {
+    const url = `${this.baseUrl}/v3/images/fill-async`;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(await this.imsClient.getAuthHeaders()),
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Firefly fillImageAsync failed: ${response.status} ${response.statusText} - ${errorText}`,
+      );
+    }
+
+    const data = (await response.json()) as FillImageV3AsyncResponse;
     if (!data.jobId) {
       throw new Error("Firefly API response missing jobId");
     }
