@@ -1,11 +1,21 @@
 {
   "name": "n8n-nodes-firefly-services",
   "version": "0.1.0",
-  "description": "n8n community node to work with the Example API",
+  "description": "n8n community node for Adobe Firefly Services - Generate images, videos, and edit photos using Adobe's generative AI",
   "license": "MIT",
-  "homepage": "https://example.com",
+  "homepage": "https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "n8n",
+    "adobe",
+    "firefly",
+    "ai",
+    "generative-ai",
+    "image-generation",
+    "video-generation",
+    "image-editing",
+    "text-to-image",
+    "text-to-video"
   ],
   "author": {
     "name": "Ahmed",
