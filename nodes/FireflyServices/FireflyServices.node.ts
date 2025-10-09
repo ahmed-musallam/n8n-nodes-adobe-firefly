@@ -8,6 +8,7 @@ import {
   LoggerProxy as Logger,
   ApplicationError,
 } from "n8n-workflow";
+import { readFile } from "fs/promises";
 
 import { IMSClient } from "../../clients/ims-client";
 import {
@@ -417,7 +418,7 @@ export class FireflyServices implements INodeType {
               maxValue: 10,
             },
             description:
-              "Adjust overall intensity (contrast, shadow, hue). Not supported with image4_custom.",
+              "minimum 2 maximum 10, Adjust overall intensity (contrast, shadow, hue). Not supported with image4_custom.",
           },
         ],
       },
@@ -437,13 +438,28 @@ export class FireflyServices implements INodeType {
       },
       // Upload Image parameters
       {
-        displayName: "Input Data Field Name",
-        name: "inputDataFieldName",
-        type: "string",
-        required: true,
-        default: "data",
-        description:
-          "The name of the binary field containing the image to upload",
+        displayName: "Input Type",
+        name: "inputType",
+        type: "options",
+        options: [
+          {
+            name: "Binary Data",
+            value: "binary",
+            description: "Use binary data from a previous node",
+          },
+          {
+            name: "URL",
+            value: "url",
+            description: "Download image from a URL",
+          },
+          {
+            name: "File Path",
+            value: "filePath",
+            description: "Read image from a file path on the system",
+          },
+        ],
+        default: "binary",
+        description: "How to provide the image to upload",
         displayOptions: {
           show: {
             operation: ["uploadImage"],
@@ -451,28 +467,48 @@ export class FireflyServices implements INodeType {
         },
       },
       {
-        displayName: "Content Type",
-        name: "contentType",
-        type: "options",
-        options: [
-          {
-            name: "JPEG",
-            value: "image/jpeg",
-          },
-          {
-            name: "PNG",
-            value: "image/png",
-          },
-          {
-            name: "WebP",
-            value: "image/webp",
-          },
-        ],
-        default: "image/jpeg",
-        description: "The MIME type of the image being uploaded",
+        displayName: "Binary Property",
+        name: "binaryProperty",
+        type: "string",
+        default: "data",
+        description:
+          'The name of the binary property field from the previous node. Leave as "data" unless you renamed it.',
+        placeholder: "data",
+        hint: 'Usually "data" - only change if you used a different property name',
         displayOptions: {
           show: {
             operation: ["uploadImage"],
+            inputType: ["binary"],
+          },
+        },
+      },
+      {
+        displayName: "Image URL",
+        name: "imageUrl",
+        type: "string",
+        default: "",
+        required: true,
+        placeholder: "https://example.com/image.jpg",
+        description: "URL of the image to download and upload to Firefly",
+        displayOptions: {
+          show: {
+            operation: ["uploadImage"],
+            inputType: ["url"],
+          },
+        },
+      },
+      {
+        displayName: "File Path",
+        name: "filePath",
+        type: "string",
+        default: "",
+        required: true,
+        placeholder: "/tmp/image.jpg",
+        description: "Full path to the image file on the system",
+        displayOptions: {
+          show: {
+            operation: ["uploadImage"],
+            inputType: ["filePath"],
           },
         },
       },
@@ -663,32 +699,137 @@ export class FireflyServices implements INodeType {
 
           Logger.info("Job canceled successfully");
         } else if (operation === "uploadImage") {
-          const inputDataFieldName = this.getNodeParameter(
-            "inputDataFieldName",
-            i,
-          ) as string;
-          const contentType = this.getNodeParameter("contentType", i) as
-            | "image/jpeg"
-            | "image/png"
-            | "image/webp";
+          const inputType = this.getNodeParameter("inputType", i) as string;
 
-          Logger.info("Uploading image via FireflyClient...", {
-            inputDataFieldName,
+          Logger.info("Uploading image via FireflyClient...", { inputType });
+
+          let binaryDataBuffer: Buffer | undefined;
+          let detectedMimeType = "";
+
+          if (inputType === "binary") {
+            const item = items[i];
+
+            // Get binary property name from JSON field or use default
+            const binaryProperty =
+              (item.json?.Binary_Property as string) ||
+              (this.getNodeParameter("binaryProperty", i, "data") as string) ||
+              "data";
+
+            Logger.info("Getting binary data from property:", {
+              binaryProperty,
+            });
+
+            // Get binary data
+            const binaryData = this.helpers.assertBinaryData(i, binaryProperty);
+            binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
+              i,
+              binaryProperty,
+            );
+            detectedMimeType = binaryData.mimeType?.toLowerCase() || "";
+
+            Logger.info("Binary data retrieved:", {
+              mimeType: detectedMimeType,
+              size: binaryDataBuffer.length,
+            });
+          } else if (inputType === "url") {
+            // Download from URL
+            const imageUrl = this.getNodeParameter("imageUrl", i) as string;
+
+            if (!imageUrl || !imageUrl.startsWith("http")) {
+              throw new ApplicationError(
+                `Invalid image URL: "${imageUrl}". Must be a valid HTTP or HTTPS URL.`,
+                { level: "warning" },
+              );
+            }
+
+            Logger.info("Downloading image from URL...", { imageUrl });
+
+            const response = await this.helpers.httpRequest({
+              method: "GET",
+              url: imageUrl,
+              encoding: "arraybuffer",
+              returnFullResponse: true,
+            });
+
+            binaryDataBuffer = Buffer.from(response.body as ArrayBuffer);
+            detectedMimeType =
+              (response.headers["content-type"] as string)?.toLowerCase() || "";
+
+            Logger.info("Image downloaded", {
+              size: binaryDataBuffer.length,
+              contentType: detectedMimeType,
+            });
+          } else if (inputType === "filePath") {
+            // Read from file path
+            const filePath = this.getNodeParameter("filePath", i) as string;
+
+            if (!filePath) {
+              throw new ApplicationError(
+                "File path is required when using 'File Path' input type.",
+                { level: "warning" },
+              );
+            }
+
+            Logger.info("Reading image from file path...", { filePath });
+
+            try {
+              binaryDataBuffer = await readFile(filePath);
+
+              // Detect MIME type from file extension
+              const ext = filePath.toLowerCase().split(".").pop();
+              if (ext === "jpg" || ext === "jpeg") {
+                detectedMimeType = "image/jpeg";
+              } else if (ext === "png") {
+                detectedMimeType = "image/png";
+              } else if (ext === "webp") {
+                detectedMimeType = "image/webp";
+              }
+
+              Logger.info("Image read from file", {
+                size: binaryDataBuffer.length,
+                detectedMimeType,
+              });
+            } catch (error) {
+              throw new ApplicationError(
+                `Failed to read image file: ${(error as Error).message}`,
+                { level: "warning" },
+              );
+            }
+          } else {
+            throw new ApplicationError(`Unknown input type: ${inputType}`, {
+              level: "warning",
+            });
+          }
+
+          // Ensure we have binary data buffer at this point
+          if (!binaryDataBuffer) {
+            throw new ApplicationError(
+              "Failed to retrieve image data. Please check the input and try again.",
+              { level: "warning" },
+            );
+          }
+
+          // Auto-detect content type from MIME type
+          let contentType: "image/jpeg" | "image/png" | "image/webp";
+
+          if (
+            detectedMimeType.includes("jpeg") ||
+            detectedMimeType.includes("jpg")
+          ) {
+            contentType = "image/jpeg";
+          } else if (detectedMimeType.includes("png")) {
+            contentType = "image/png";
+          } else if (detectedMimeType.includes("webp")) {
+            contentType = "image/webp";
+          } else {
+            throw new ApplicationError(
+              `Unsupported image format: ${detectedMimeType}. Adobe Firefly only supports JPEG, PNG, and WebP formats.`,
+              { level: "warning" },
+            );
+          }
+
+          Logger.info("Uploading to Firefly...", {
             contentType,
-          });
-
-          // Get binary data
-          const binaryData = this.helpers.assertBinaryData(
-            i,
-            inputDataFieldName,
-          );
-          const binaryDataBuffer = await this.helpers.getBinaryDataBuffer(
-            i,
-            inputDataFieldName,
-          );
-
-          Logger.info("Binary data retrieved", {
-            mimeType: binaryData.mimeType,
             size: binaryDataBuffer.length,
           });
 
