@@ -1,6 +1,8 @@
 export { executeExpandImageAsync } from "./expandImageAsync";
 export { executeFillImageAsync } from "./fillImageAsync";
 export { executeGenerateImagesAsync } from "./generateImagesAsync";
+export { executeGenerateObjectCompositeAsync } from "./generateObjectCompositeAsync";
+export { executeGenerateSimilarImagesAsync } from "./generateSimilarImagesAsync";
 export { executeGenerateVideoAsync } from "./generateVideoAsync";
 export { executeGetJobStatus } from "./getJobStatus";
 export { executeCancelJob } from "./cancelJob";

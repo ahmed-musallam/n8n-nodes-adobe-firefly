@@ -15,6 +15,8 @@ import {
   executeExpandImageAsync,
   executeFillImageAsync,
   executeGenerateImagesAsync,
+  executeGenerateObjectCompositeAsync,
+  executeGenerateSimilarImagesAsync,
   executeGenerateVideoAsync,
   executeGetJobStatus,
   executeCancelJob,
@@ -77,6 +79,20 @@ export class FireflyServices implements INodeType {
             value: "generateImagesAsync",
             description: "Generate images from text prompt asynchronously",
             action: "Generate images from text prompt",
+          },
+          {
+            name: "Generate Object Composite (Async)",
+            value: "generateObjectCompositeAsync",
+            description:
+              "Combine an image with AI-generated content to create a composite scene",
+            action: "Generate object composite from image and prompt",
+          },
+          {
+            name: "Generate Similar Images (Async)",
+            value: "generateSimilarImagesAsync",
+            description:
+              "Generate similar variations based on a reference image",
+            action: "Generate similar images from reference",
           },
           {
             name: "Generate Video (Async)",
@@ -741,6 +757,276 @@ export class FireflyServices implements INodeType {
           },
         ],
       },
+      // Generate Similar Images Async parameters
+      {
+        displayName: "Reference Image Upload ID",
+        name: "similarImageUploadId",
+        type: "string",
+        required: true,
+        default: "",
+        placeholder: "123e4567-e89b-12d3-a456-426614174000",
+        description:
+          "Upload ID from storage API of the reference image to create similar variations",
+        displayOptions: {
+          show: {
+            operation: ["generateSimilarImagesAsync"],
+          },
+        },
+      },
+      {
+        displayName: "Similar Image Options",
+        name: "similarOptions",
+        type: "collection",
+        placeholder: "Add Option",
+        default: {},
+        displayOptions: {
+          show: {
+            operation: ["generateSimilarImagesAsync"],
+          },
+        },
+        options: [
+          {
+            displayName: "Model Version",
+            name: "modelVersion",
+            type: "options",
+            options: [
+              { name: "Image 3", value: "image3" },
+              { name: "Image 4 Standard", value: "image4_standard" },
+              { name: "Image 4 Ultra", value: "image4_ultra" },
+            ],
+            default: "image3",
+            description: "Firefly model version to use for generation",
+          },
+          {
+            displayName: "Number of Variations",
+            name: "numVariations",
+            type: "number",
+            default: 1,
+            typeOptions: {
+              minValue: 1,
+              maxValue: 4,
+            },
+            description: "Number of variations to generate (1-4)",
+          },
+          {
+            displayName: "Seeds",
+            name: "seeds",
+            type: "string",
+            default: "",
+            placeholder: "12345, 67890",
+            description:
+              "Comma-separated seed image IDs for consistent generation. Must match numVariations if specified.",
+          },
+          {
+            displayName: "Size",
+            name: "size",
+            type: "options",
+            options: [
+              { name: "1024x1024 (1:1 Square)", value: "1024x1024" },
+              { name: "1152x896 (9:7)", value: "1152x896" },
+              { name: "1344x756 (16:9 Widescreen)", value: "1344x756" },
+              { name: "1344x768 (7:4)", value: "1344x768" },
+              { name: "1792x2304 (3:4 Portrait)", value: "1792x2304" },
+              { name: "2048x2048 (1:1 Square)", value: "2048x2048" },
+              { name: "2304x1792 (4:3 Landscape)", value: "2304x1792" },
+              { name: "2688x1512 (16:9 Widescreen)", value: "2688x1512" },
+              { name: "2688x1536 (16:9 Widescreen)", value: "2688x1536" },
+              { name: "896x1152 (7:9)", value: "896x1152" },
+            ],
+            default: "2048x2048",
+            description: "Output image dimensions",
+          },
+        ],
+      },
+      // Generate Object Composite Async parameters
+      {
+        displayName: "Source Image Upload ID",
+        name: "compositeImageUploadId",
+        type: "string",
+        required: true,
+        default: "",
+        placeholder: "123e4567-e89b-12d3-a456-426614174000",
+        description:
+          "Upload ID from storage API of the image to use for composition",
+        displayOptions: {
+          show: {
+            operation: ["generateObjectCompositeAsync"],
+          },
+        },
+      },
+      {
+        displayName: "Prompt",
+        name: "compositePrompt",
+        type: "string",
+        required: true,
+        default: "",
+        placeholder: "A product on a beach with palm trees",
+        description:
+          "Text description for the composite scene (1-1024 characters)",
+        typeOptions: {
+          rows: 3,
+        },
+        displayOptions: {
+          show: {
+            operation: ["generateObjectCompositeAsync"],
+          },
+        },
+      },
+      {
+        displayName: "Composite Options",
+        name: "compositeOptions",
+        type: "collection",
+        placeholder: "Add Option",
+        default: {},
+        displayOptions: {
+          show: {
+            operation: ["generateObjectCompositeAsync"],
+          },
+        },
+        options: [
+          {
+            displayName: "Content Class",
+            name: "contentClass",
+            type: "options",
+            options: [
+              { name: "Art", value: "art" },
+              { name: "Photo", value: "photo" },
+            ],
+            default: "photo",
+            description:
+              "Generate an image to be more photographic or more like art",
+          },
+          {
+            displayName: "Horizontal Alignment",
+            name: "horizontalAlignment",
+            type: "options",
+            options: [
+              { name: "Center", value: "center" },
+              { name: "Left", value: "left" },
+              { name: "Right", value: "right" },
+            ],
+            default: "center",
+            description: "Horizontal placement of source image",
+          },
+          {
+            displayName: "Inset Bottom",
+            name: "insetBottom",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+            },
+            description: "Margin from bottom edge in pixels",
+          },
+          {
+            displayName: "Inset Left",
+            name: "insetLeft",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+            },
+            description: "Margin from left edge in pixels",
+          },
+          {
+            displayName: "Inset Right",
+            name: "insetRight",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+            },
+            description: "Margin from right edge in pixels",
+          },
+          {
+            displayName: "Inset Top",
+            name: "insetTop",
+            type: "number",
+            default: 0,
+            typeOptions: {
+              minValue: 0,
+            },
+            description: "Margin from top edge in pixels",
+          },
+          {
+            displayName: "Mask Upload ID",
+            name: "maskUploadId",
+            type: "string",
+            default: "",
+            placeholder: "123e4567-e89b-12d3-a456-426614174000",
+            description: "Upload ID of mask image (optional)",
+          },
+          {
+            displayName: "Number of Variations",
+            name: "numVariations",
+            type: "number",
+            default: 1,
+            typeOptions: {
+              minValue: 1,
+              maxValue: 4,
+            },
+            description: "Number of variations to generate (1-4)",
+          },
+          {
+            displayName: "Seeds",
+            name: "seeds",
+            type: "string",
+            default: "",
+            placeholder: "12345, 67890",
+            description:
+              "Comma-separated seed image IDs for consistent generation. Must match numVariations if specified.",
+          },
+          {
+            displayName: "Size",
+            name: "size",
+            type: "options",
+            options: [
+              { name: "1024x1024 (1:1 Square)", value: "1024x1024" },
+              { name: "1152x896 (9:7)", value: "1152x896" },
+              { name: "1344x768 (7:4)", value: "1344x768" },
+              { name: "1792x2304 (3:4 Portrait)", value: "1792x2304" },
+              { name: "2048x2048 (1:1 Square)", value: "2048x2048" },
+              { name: "2304x1792 (4:3 Landscape)", value: "2304x1792" },
+              { name: "2688x1536 (16:9 Widescreen)", value: "2688x1536" },
+              { name: "896x1152 (7:9)", value: "896x1152" },
+            ],
+            default: "2048x2048",
+            description: "Output image dimensions",
+          },
+          {
+            displayName: "Style Reference Upload ID",
+            name: "styleReferenceUploadId",
+            type: "string",
+            default: "",
+            placeholder: "123e4567-e89b-12d3-a456-426614174000",
+            description: "Upload ID of style reference image (optional)",
+          },
+          {
+            displayName: "Style Strength",
+            name: "styleStrength",
+            type: "number",
+            default: 50,
+            typeOptions: {
+              minValue: 1,
+              maxValue: 100,
+            },
+            description:
+              "How strictly to adhere to the style reference (1-100)",
+          },
+          {
+            displayName: "Vertical Alignment",
+            name: "verticalAlignment",
+            type: "options",
+            options: [
+              { name: "Bottom", value: "bottom" },
+              { name: "Center", value: "center" },
+              { name: "Top", value: "top" },
+            ],
+            default: "center",
+            description: "Vertical placement of source image",
+          },
+        ],
+      },
       // Generate Video Async parameters
       {
         displayName: "Prompt",
@@ -1028,6 +1314,18 @@ export class FireflyServices implements INodeType {
           );
         } else if (operation === "generateImagesAsync") {
           responseData = await executeGenerateImagesAsync.call(
+            this,
+            i,
+            fireflyClient,
+          );
+        } else if (operation === "generateObjectCompositeAsync") {
+          responseData = await executeGenerateObjectCompositeAsync.call(
+            this,
+            i,
+            fireflyClient,
+          );
+        } else if (operation === "generateSimilarImagesAsync") {
+          responseData = await executeGenerateSimilarImagesAsync.call(
             this,
             i,
             fireflyClient,

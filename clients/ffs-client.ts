@@ -5,6 +5,8 @@
  * - /v3/images/generate-async (image generation)
  * - /v3/images/expand-async (image expansion)
  * - /v3/images/fill-async (image fill)
+ * - /v3/images/generate-similar-async (similar image generation)
+ * - /v3/images/generate-object-composite-async (object composite generation)
  * - /v3/videos/generate (video generation)
  * - /v3/status/{jobId} (job status polling)
  * - /v3/cancel/{jobId} (job cancellation)
@@ -16,6 +18,8 @@
  * - .cursor/schema/image_generation_async_v3.json
  * - .cursor/schema/generative_expand_async_v3.json
  * - .cursor/schema/generative_fill_async_v3.json
+ * - .cursor/schema/generate_similar_async_v3.json
+ * - .cursor/schema/generate_object_composite_async_v3.json
  * - .cursor/schema/generate_video_api.json
  * - .cursor/rules/adobe-firefly-api.md
  */
@@ -181,6 +185,82 @@ export type FillImageV3AsyncRequest = {
 };
 
 export type FillImageV3AsyncResponse = {
+  // See OpenAPI: #/components/schemas/AsyncAcceptResponseV3
+  jobId: string;
+  statusUrl: string;
+  cancelUrl: string;
+};
+
+export type GenerateSimilarImagesV3AsyncRequest = {
+  // See OpenAPI: #/components/schemas/GenerateSimilarImagesRequestV3
+  image: {
+    source: {
+      uploadId?: string;
+      url?: string;
+    };
+  };
+  numVariations?: number; // 1-4
+  seeds?: number[]; // 1-4 items
+  size?: {
+    width: number;
+    height: number;
+  };
+};
+
+export type GenerateSimilarImagesV3AsyncResponse = {
+  // See OpenAPI: #/components/schemas/AsyncAcceptResponseV3
+  jobId: string;
+  statusUrl: string;
+  cancelUrl: string;
+};
+
+export type GenerateObjectCompositeV3AsyncRequest = {
+  // See OpenAPI: #/components/schemas/GenerateObjectCompositeRequestV3
+  image: {
+    source: {
+      uploadId?: string;
+      url?: string;
+    };
+  };
+  prompt: string; // required, 1-1024 characters
+  mask?: {
+    source: {
+      uploadId?: string;
+      url?: string;
+    };
+  };
+  contentClass?: "photo" | "art";
+  numVariations?: number; // 1-4
+  placement?: {
+    alignment?: {
+      horizontal?: "center" | "left" | "right";
+      vertical?: "center" | "top" | "bottom";
+    };
+    inset?: {
+      top?: number;
+      right?: number;
+      bottom?: number;
+      left?: number;
+    };
+  };
+  seeds?: number[]; // 1-4 items
+  size?: {
+    width: number;
+    height: number;
+  };
+  style?: {
+    imageReference?: {
+      source: {
+        uploadId?: string;
+        url?: string;
+      };
+    };
+    presets?: string[];
+    strength?: number; // exclusive min 0, max 100
+  };
+};
+
+export type GenerateObjectCompositeV3AsyncResponse = {
   // See OpenAPI: #/components/schemas/AsyncAcceptResponseV3
   jobId: string;
   statusUrl: string;
@@ -476,6 +556,91 @@ export class FireflyClient {
     }
 
     const data = (await response.json()) as FillImageV3AsyncResponse;
+    if (!data.jobId) {
+      throw new Error("Firefly API response missing jobId");
+    }
+    return data;
+  }
+
+  /**
+   * Generate similar images asynchronously (V3).
+   * Implements the POST /v3/images/generate-similar-async endpoint per generate_similar_async_v3.json.
+   * Generate similar variations based on a reference image.
+   *
+   * @param requestBody - The request payload (see OpenAPI spec for details)
+   * @param modelVersion - Optional Firefly model version (header: x-model-version)
+   * @returns The async job response (contains jobId, statusUrl, cancelUrl)
+   * @throws Error if the API call fails
+   */
+  async generateSimilarImagesAsync(
+    requestBody: GenerateSimilarImagesV3AsyncRequest,
+    modelVersion?: ModelVersion,
+  ): Promise<GenerateSimilarImagesV3AsyncResponse> {
+    const url = `${this.baseUrl}/v3/images/generate-similar-async`;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(await this.imsClient.getAuthHeaders()),
+    };
+    if (modelVersion) {
+      headers["x-model-version"] = modelVersion;
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Firefly generateSimilarImagesAsync failed: ${response.status} ${response.statusText} - ${errorText}`,
+      );
+    }
+
+    const data =
+      (await response.json()) as GenerateSimilarImagesV3AsyncResponse;
+    if (!data.jobId) {
+      throw new Error("Firefly API response missing jobId");
+    }
+    return data;
+  }
+
+  /**
+   * Generate object composite asynchronously (V3).
+   * Implements the POST /v3/images/generate-object-composite-async endpoint per generate_object_composite_async_v3.json.
+   * Combines an image and AI-generated images to create a composite scene.
+   *
+   * @param requestBody - The request payload (see OpenAPI spec for details)
+   * @returns The async job response (contains jobId, statusUrl, cancelUrl)
+   * @throws Error if the API call fails
+   */
+  async generateObjectCompositeAsync(
+    requestBody: GenerateObjectCompositeV3AsyncRequest,
+  ): Promise<GenerateObjectCompositeV3AsyncResponse> {
+    const url = `${this.baseUrl}/v3/images/generate-object-composite-async`;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(await this.imsClient.getAuthHeaders()),
+    };
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Firefly generateObjectCompositeAsync failed: ${response.status} ${response.statusText} - ${errorText}`,
+      );
+    }
+
+    const data =
+      (await response.json()) as GenerateObjectCompositeV3AsyncResponse;
     if (!data.jobId) {
       throw new Error("Firefly API response missing jobId");
     }

@@ -1,0 +1,464 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "ask me to generate images, I will ask firefly and prompt it on your behalf",
+        "options": {
+          "allowFileUploads": true,
+          "subtitle": "",
+          "title": "Firefly Agent ",
+          "customCss": ":root {\n  /* Colors */\n  --chat--color-primary: #e74266;\n  --chat--color-primary-shade-50: #db4061;\n  --chat--color-primary-shade-100: #cf3c5c;\n  --chat--color-secondary: #20b69e;\n  --chat--color-secondary-shade-50: #1ca08a;\n  --chat--color-white: #ffffff;\n  --chat--color-light: #f2f4f8;\n  --chat--color-light-shade-50: #e6e9f1;\n  --chat--color-light-shade-100: #c2c5cc;\n  --chat--color-medium: #d2d4d9;\n  --chat--color-dark: #101330;\n  --chat--color-disabled: #d2d4d9;\n  --chat--color-typing: #404040;\n\n  /* Base Layout */\n  --chat--spacing: 1rem;\n  --chat--border-radius: 0.25rem;\n  --chat--transition-duration: 0.15s;\n  --chat--font-family: (\n    Roboto,\n    'Helvetica Neue',\n    -apple-system,\n    BlinkMacSystemFont,\n    'Segoe UI',\n    Roboto,\n    Oxygen-Sans,\n    Ubuntu,\n    Cantarell,\n    sans-serif\n  );\n\n  /* Window Dimensions */\n  --chat--window--width: 400px;\n  --chat--window--height: 600px;\n  --chat--window--bottom: var(--chat--spacing);\n  --chat--window--right: var(--chat--spacing);\n  --chat--window--z-index: 9999;\n  --chat--window--border: 1px solid var(--chat--color-light-shade-50);\n  --chat--window--border-radius: var(--chat--border-radius);\n  --chat--window--margin-bottom: var(--chat--spacing);\n\n  /* Header Styles */\n  --chat--header-height: auto;\n  --chat--header--padding: var(--chat--spacing);\n  --chat--header--background: var(--chat--color-dark);\n  --chat--header--color: var(--chat--color-light);\n  --chat--header--border-top: none;\n  --chat--header--border-bottom: none;\n  --chat--header--border-left: none;\n  --chat--header--border-right: none;\n  --chat--heading--font-size: 2em;\n  --chat--subtitle--font-size: inherit;\n  --chat--subtitle--line-height: 1.8;\n\n  /* Message Styles */\n  --chat--message--font-size: 1rem;\n  --chat--message--padding: var(--chat--spacing);\n  --chat--message--border-radius: var(--chat--border-radius);\n  --chat--message-line-height: 1.5;\n  --chat--message--margin-bottom: calc(var(--chat--spacing) * 1);\n  --chat--message--bot--background: var(--chat--color-white);\n  --chat--message--bot--color: var(--chat--color-dark);\n  --chat--message--bot--border: none;\n  --chat--message--user--background: var(--chat--color-secondary);\n  --chat--message--user--color: var(--chat--color-white);\n  --chat--message--user--border: none;\n  --chat--message--pre--background: rgba(0, 0, 0, 0.05);\n  --chat--messages-list--padding: var(--chat--spacing);\n\n  /* Toggle Button */\n  --chat--toggle--size: 64px;\n  --chat--toggle--width: var(--chat--toggle--size);\n  --chat--toggle--height: var(--chat--toggle--size);\n  --chat--toggle--border-radius: 50%;\n  --chat--toggle--background: var(--chat--color-primary);\n  --chat--toggle--hover--background: var(--chat--color-primary-shade-50);\n  --chat--toggle--active--background: var(--chat--color-primary-shade-100);\n  --chat--toggle--color: var(--chat--color-white);\n\n  /* Input Area */\n  --chat--textarea--height: 50px;\n  --chat--textarea--max-height: 30rem;\n  --chat--input--font-size: inherit;\n  --chat--input--border: 0;\n  --chat--input--border-radius: 0;\n  --chat--input--padding: 0.8rem;\n  --chat--input--background: var(--chat--color-white);\n  --chat--input--text-color: initial;\n  --chat--input--line-height: 1.5;\n  --chat--input--placeholder--font-size: var(--chat--input--font-size);\n  --chat--input--border-active: 0;\n  --chat--input--left--panel--width: 2rem;\n\n  /* Button Styles */\n  --chat--button--color: var(--chat--color-light);\n  --chat--button--background: var(--chat--color-primary);\n  --chat--button--padding: calc(var(--chat--spacing) * 1 / 2) var(--chat--spacing);\n  --chat--button--border-radius: var(--chat--border-radius);\n  --chat--button--hover--color: var(--chat--color-light);\n  --chat--button--hover--background: var(--chat--color-primary-shade-50);\n  --chat--close--button--color-hover: var(--chat--color-primary);\n\n  /* Send and File Buttons */\n  --chat--input--send--button--background: var(--chat--color-white);\n  --chat--input--send--button--color: var(--chat--color-secondary);\n  --chat--input--send--button--background-hover: var(--chat--color-primary-shade-50);\n  --chat--input--send--button--color-hover: var(--chat--color-secondary-shade-50);\n  --chat--input--file--button--background: var(--chat--color-white);\n  --chat--input--file--button--color: var(--chat--color-secondary);\n  --chat--input--file--button--background-hover: var(--chat--input--file--button--background);\n  --chat--input--file--button--color-hover: var(--chat--color-secondary-shade-50);\n  --chat--files-spacing: 0.25rem;\n\n  /* Body and Footer */\n  --chat--body--background: var(--chat--color-light);\n  --chat--footer--background: var(--chat--color-light);\n  --chat--footer--color: var(--chat--color-dark);\n}\n\n\n/* You can override any class styles, too. Right-click inspect in Chat UI to find class to override. */\n.chat-message {\n\tmax-width: 70%;\n}",
+          "responseMode": "streaming"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [768, 240],
+      "id": "ca1ca89a-c377-4152-aeff-8de281a46779",
+      "name": "When chat message received",
+      "webhookId": "9c9c12a8-230f-41ef-99d9-b7e2e877a11a",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant for image generation and manipulation. In your responses you always keep track of any identifiers or jobs and you tell the user exactly what you've executed. You especially respond with jobIds and any other relevant identifiers.",
+          "passthroughBinaryImages": true,
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [1624, 240],
+      "id": "b737c561-665e-40ec-8e8a-83a961999fb9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "getJobStatus",
+        "jobId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Job_ID', ``, 'string') }}"
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [1248, 464],
+      "id": "fc7058d6-935a-4576-a3eb-b99d68f4181e",
+      "name": "Gen Image Job Status",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "uploadImage",
+        "binaryProperty": "={{ $('When chat message received').item.binary.data0}}"
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [1376, 464],
+      "id": "3fc705bb-a013-455c-b85c-3903cdcb514f",
+      "name": "Upload Image",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucketName": "my-bucket",
+        "fileName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('File_Name', `Always pick a name based on the file user provided`, 'string') }}",
+        "binaryPropertyName": "={{ $('When chat message received').item.binary.data0}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.s3Tool",
+      "typeVersion": 1,
+      "position": [1504, 464],
+      "id": "942cdd4a-4432-4696-96ac-fbeaf0efa639",
+      "name": "Upload a file in S3",
+      "credentials": {
+        "s3": {
+          "id": "e23yiA4L3UYmidMA",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "bucketName": "my-bucket",
+        "fileKey": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('File_Key', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.s3Tool",
+      "typeVersion": 1,
+      "position": [1632, 464],
+      "id": "a452aff7-e10d-4365-9340-d13b8fceb5b0",
+      "name": "Download a file in S3",
+      "credentials": {
+        "s3": {
+          "id": "e23yiA4L3UYmidMA",
+          "name": "S3 account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "A firefly service to generate images. all prompts must not exceed 1024 characters.",
+        "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt', ``, 'string') }}",
+        "additionalOptions": {
+          "contentClass": "={{ $fromAI('contentClass', 'Directs the style of a generated image to be photographic or like fine art. either \"photo\" or \"art\"') }}",
+          "imageSize": "2048x2048",
+          "negativePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Negative_Prompt', ``, 'string') }}",
+          "numVariations": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Number_of_Variations', ``, 'number') }}",
+          "seeds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Seeds', ``, 'string') }}",
+          "structureReference": {
+            "sourceType": "uploadId",
+            "uploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Upload_ID', ``, 'string') }}"
+          },
+          "styleReference": {
+            "sourceType": "uploadId",
+            "uploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Upload_ID', ``, 'string') }}"
+          }
+        }
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [1760, 464],
+      "id": "1666b83a-658d-43d6-aa35-2c2c51ce16a0",
+      "name": "Gen Image",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [1120, 464],
+      "id": "5c1d6c41-e63f-4198-8b6b-a2339e2737e8",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [992, 464],
+      "id": "897b1ef5-ed05-4a08-8c6d-1b35c63df00a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "WsTl7P2P0KpsU5KM",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "generateVideoAsync",
+        "videoPrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt', ``, 'string') }}",
+        "videoOptions": {
+          "bitRateFactor": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Bit_Rate_Factor', ``, 'number') }}",
+          "cameraMotion": "={{ $fromAI('CameraMotion', 'The camera motion control.', 'string') }}",
+          "keyframeUploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Keyframe_Image_Upload_ID', ``, 'string') }}",
+          "keyframePosition": 0,
+          "promptStyle": "cinematic",
+          "seed": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Seed', ``, 'number') }}",
+          "shotAngle": "eye_level shot",
+          "shotSize": "medium shot",
+          "videoSize": "720x720"
+        }
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [1888, 464],
+      "id": "394c4008-f056-4e29-b564-9fd457330c9d",
+      "name": "Gen Video",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "expandImageAsync",
+        "sourceImageUploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Source_Image_Upload_ID', ``, 'string') }}",
+        "expandOptions": {
+          "height": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Height', ``, 'number') }}",
+          "insetBottom": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Inset_Bottom', ``, 'number') }}",
+          "insetLeft": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Inset_Left', ``, 'number') }}",
+          "insetRight": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Inset_Right', ``, 'number') }}",
+          "insetTop": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Inset_Top', ``, 'number') }}",
+          "invertMask": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Invert_Mask', ``, 'boolean') }}",
+          "numVariations": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Number_of_Variations', ``, 'number') }}",
+          "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt', ``, 'string') }}",
+          "seeds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Seeds', ``, 'string') }}",
+          "width": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Width', ``, 'number') }}"
+        }
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [2016, 464],
+      "id": "523a6744-73f7-4fd1-9bcb-5009fd488eb1",
+      "name": "Gen Expand",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "fillImageAsync",
+        "fillSourceImageUploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Source_Image_Upload_ID', ``, 'string') }}",
+        "fillMaskUploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Mask_Upload_ID', ``, 'string') }}",
+        "fillOptions": {
+          "invertMask": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Invert_Mask', ``, 'boolean') }}",
+          "negativePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Negative_Prompt', ``, 'string') }}",
+          "numVariations": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Number_of_Variations', ``, 'number') }}",
+          "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt', ``, 'string') }}",
+          "promptBiasingLocaleCode": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt_Biasing_Locale_Code', ``, 'string') }}",
+          "seeds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Seeds', ``, 'string') }}",
+          "size": "2048x2048"
+        }
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [2144, 464],
+      "id": "51002428-138e-4dc1-8519-28f43612c33b",
+      "name": "Gen Fill",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "generateSimilarImagesAsync",
+        "similarImageUploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Reference_Image_Upload_ID', ``, 'string') }}",
+        "similarOptions": {
+          "numVariations": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Number_of_Variations', ``, 'number') }}",
+          "seeds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Seeds', ``, 'string') }}"
+        }
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [2272, 464],
+      "id": "f49afc6d-2d9a-472d-8ef5-43d2a53a3910",
+      "name": "Gen Similar",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "generateObjectCompositeAsync",
+        "compositeImageUploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Source_Image_Upload_ID', ``, 'string') }}",
+        "compositePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt', ``, 'string') }}",
+        "compositeOptions": {
+          "contentClass": "photo",
+          "insetBottom": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Inset_Bottom', ``, 'number') }}",
+          "insetLeft": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Inset_Left', ``, 'number') }}",
+          "insetRight": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Inset_Right', ``, 'number') }}",
+          "insetTop": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Inset_Top', ``, 'number') }}",
+          "maskUploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Mask_Upload_ID', ``, 'string') }}",
+          "numVariations": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Number_of_Variations', ``, 'number') }}",
+          "seeds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Seeds', ``, 'string') }}",
+          "size": "2048x2048",
+          "styleReferenceUploadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Style_Reference_Upload_ID', ``, 'string') }}",
+          "styleStrength": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Style_Strength', ``, 'number') }}"
+        }
+      },
+      "type": "CUSTOM.fireflyServicesTool",
+      "typeVersion": 1,
+      "position": [2400, 464],
+      "id": "1b4826c7-da55-4312-8496-74489f374e16",
+      "name": "Gen Object Composite",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Services account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [[]]
+    },
+    "Gen Image Job Status": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Image": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload a file in S3": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download a file in S3": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen Image": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen Video": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen Expand": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen Fill": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen Similar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen Object Composite": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f32a6dab1cb21d21c71dc98697cfca18dbb21ac762a44e185b905684a8455836"
+  }
+}
