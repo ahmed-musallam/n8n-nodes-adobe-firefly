@@ -1,0 +1,256 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Text To Avatar",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "text",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [-272, 0],
+      "id": "c7176021-6821-4f7f-a6c2-3332146e6a73",
+      "name": "On form submission",
+      "webhookId": "645853d2-4074-47eb-ab7b-15c9b71930ec"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [336, 16],
+      "id": "4d64448c-0ccc-45e8-9382-850b476a5920",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "operation": "getVoices"
+      },
+      "type": "CUSTOM.fireflyAudioVideo",
+      "typeVersion": 1,
+      "position": [-80, 128],
+      "id": "36fdf7e6-7588-42ce-a28d-a00e8a65a5ec",
+      "name": "Get Voices",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "defineForm": "json",
+        "jsonOutput": "=[\n  {\n    \"fieldLabel\": \"voice\",\n    \"fieldType\": \"dropdown\",\n    \"fieldOptions\": {\n      \"values\": [\n       {{$json.voices.map(v => v.voiceId).map(v => `{\"option\":\"${v}\"}`).join()}}\n      ]\n    },\n    \"requiredField\": true\n  }\n]\n",
+        "options": {
+          "formTitle": "Select Voice"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [96, 128],
+      "id": "1356a3b2-a4ec-4ef6-bda2-3776312628f9",
+      "name": "select voice",
+      "webhookId": "7873a8b4-ba1d-48da-ab01-5ca22ea12152"
+    },
+    {
+      "parameters": {
+        "defineForm": "json",
+        "jsonOutput": "=[\n  {\n    \"fieldLabel\": \"avatar\",\n    \"fieldType\": \"dropdown\",\n    \"fieldOptions\": {\n      \"values\": [\n       {{$json.avatars.map(v => v.avatarId).map(v => `{\"option\":\"${v}\"}`).join()}}\n      ]\n    },\n    \"requiredField\": true\n  }\n]\n",
+        "options": {
+          "formTitle": "Select Voice"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [96, 256],
+      "id": "9b9fbf6a-0d1c-4c53-b2d0-4c92b647a12c",
+      "name": "select avatar",
+      "webhookId": "7873a8b4-ba1d-48da-ab01-5ca22ea12152"
+    },
+    {
+      "parameters": {
+        "operation": "getAvatars"
+      },
+      "type": "CUSTOM.fireflyAudioVideo",
+      "typeVersion": 1,
+      "position": [-80, 256],
+      "id": "1e36a7ce-6a69-4f88-a3bd-d45c55539c4f",
+      "name": "Get Avatars",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Done!",
+        "completionMessage": "=\n\n<video controls >\n  <source src=\"{{ $json.output.destination.url }}\" type=\"video/mp4\" />\n  Download the\n  <a href=\"{{ $json.output.destination.url }}\">MP4</a>\n</video>\n<br>\n\n<br>\n<a class=\"download\" href=\"{{ $json.output.destination.url }}\" download>Download</a>\n",
+        "options": {
+          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #ff6d5a;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 80%;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n\n    video {\n      margin: 0 auto;\n      max-width: 100%;\n    }\n    .download {\n      padding: 10px;\n      background: \n    }\n    .prompt {\n      border: 1px solid rgba(0, 0, 0, 0.05);\n      border-radius: 5px;\n      padding: 10px;\n    }\n}"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [832, 32],
+      "id": "81dc24af-46e9-40cf-9623-654d7dd55d70",
+      "name": "Show Result",
+      "webhookId": "f20a9965-7ddf-4e44-bf28-00f31501ce23"
+    },
+    {
+      "parameters": {
+        "operation": "waitForJob",
+        "jobId": "={{ $json.jobId }}"
+      },
+      "type": "CUSTOM.fireflyAudioVideo",
+      "typeVersion": 1,
+      "position": [672, 32],
+      "id": "1752b95d-825a-4db4-9b4c-2ad763b5b6c7",
+      "name": "Wait for Avatar job",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "generateAvatar",
+        "scriptInput": "={{ $json.text }}",
+        "voiceId": "={{ $json.voice }}",
+        "avatarId": "={{ $json.avatar }}"
+      },
+      "type": "CUSTOM.fireflyAudioVideo",
+      "typeVersion": 1,
+      "position": [512, 32],
+      "id": "0962c571-88f9-4978-9510-62aa5ceae6da",
+      "name": "Generate Avatar",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Voices",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Avatars",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Generate Avatar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voices": {
+      "main": [
+        [
+          {
+            "node": "select voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "select voice": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "select avatar": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Get Avatars": {
+      "main": [
+        [
+          {
+            "node": "select avatar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Avatar job": {
+      "main": [
+        [
+          {
+            "node": "Show Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Avatar": {
+      "main": [
+        [
+          {
+            "node": "Wait for Avatar job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f32a6dab1cb21d21c71dc98697cfca18dbb21ac762a44e185b905684a8455836"
+  }
+}
