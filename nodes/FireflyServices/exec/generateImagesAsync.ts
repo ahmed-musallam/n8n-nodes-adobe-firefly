@@ -8,7 +8,7 @@ import {
   FireflyClient,
   type GenerateImagesV3AsyncRequest,
   type ModelVersion,
-} from "../../../clients/ffs-client";
+} from "../../../clients/firefly";
 
 export async function executeGenerateImagesAsync(
   this: IExecuteFunctions,

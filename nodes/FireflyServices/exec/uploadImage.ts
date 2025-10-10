@@ -5,7 +5,7 @@ import {
   ApplicationError,
 } from "n8n-workflow";
 import { readFile } from "fs/promises";
-import { FireflyClient } from "../../../clients/ffs-client";
+import { FireflyClient } from "../../../clients/firefly";
 
 export async function executeUploadImage(
   this: IExecuteFunctions,

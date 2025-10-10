@@ -3,7 +3,7 @@ import {
   type IDataObject,
   LoggerProxy as Logger,
 } from "n8n-workflow";
-import { FireflyClient } from "../../../clients/ffs-client";
+import { FireflyClient } from "../../../clients/firefly";
 
 export async function executeCancelJob(
   this: IExecuteFunctions,

@@ -10,7 +10,7 @@ import {
 } from "n8n-workflow";
 
 import { IMSClient } from "../../clients/ims-client";
-import { FireflyClient } from "../../clients/ffs-client";
+import { FireflyClient } from "../../clients/firefly";
 import {
   executeExpandImageAsync,
   executeFillImageAsync,
@@ -1173,10 +1173,12 @@ export class FireflyServices implements INodeType {
           {
             displayName: "Video Size",
             name: "videoSize",
-            type: "options",
-            options: [{ name: "720x720 (1:1 Square)", value: "720x720" }],
-            default: "720x720",
-            description: "Output video dimensions",
+            type: "string",
+            default: "1920x1080",
+            placeholder: "1920x1080",
+            description:
+              "Output video dimensions (WIDTHxHEIGHT). Common presets: 16:9 (1920x1080, 1280x720, 960x540), 9:16 (1080x1920, 720x1280, 540x960), 1:1 (1080x1080, 720x720, 540x540).",
+            hint: "Format: WIDTHxHEIGHT (e.g., 1920x1080)",
           },
         ],
       },
@@ -1191,6 +1193,55 @@ export class FireflyServices implements INodeType {
         displayOptions: {
           show: {
             operation: ["getJobStatus", "cancelJob"],
+          },
+        },
+      },
+      {
+        displayName: "Wait for Completion",
+        name: "waitForCompletion",
+        type: "boolean",
+        default: false,
+        description:
+          "Whether to wait for the job to complete before returning. The node will poll the job status until it succeeds or fails.",
+        displayOptions: {
+          show: {
+            operation: ["getJobStatus"],
+          },
+        },
+      },
+      {
+        displayName: "Polling Interval (Seconds)",
+        name: "pollingInterval",
+        type: "number",
+        default: 3,
+        typeOptions: {
+          minValue: 1,
+          maxValue: 60,
+        },
+        description:
+          "How often to check the job status (in seconds) when waiting for completion",
+        displayOptions: {
+          show: {
+            operation: ["getJobStatus"],
+            waitForCompletion: [true],
+          },
+        },
+      },
+      {
+        displayName: "Timeout (Minutes)",
+        name: "timeout",
+        type: "number",
+        default: 5,
+        typeOptions: {
+          minValue: 1,
+          maxValue: 60,
+        },
+        description:
+          "Maximum time to wait for job completion (in minutes). The node will fail if the timeout is reached.",
+        displayOptions: {
+          show: {
+            operation: ["getJobStatus"],
+            waitForCompletion: [true],
           },
         },
       },

@@ -8,7 +8,7 @@ import {
   FireflyClient,
   type GenerateVideoV3AsyncRequest,
   type VideoModelVersion,
-} from "../../../clients/ffs-client";
+} from "../../../clients/firefly";
 
 export async function executeGenerateVideoAsync(
   this: IExecuteFunctions,

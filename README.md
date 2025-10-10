@@ -39,7 +39,7 @@ For Docker-based deployments, add the package in your [data folder's](https://do
 - **Expand Image (Async)**: Expand images beyond their original boundaries
 - **Fill Image (Async)**: Fill masked areas of an image with AI-generated content
 - **Generate Video (Async)**: Create AI-generated videos from text prompts
-- **Get Job Status**: Check the status of any asynchronous job (image/video generation)
+- **Get Job Status**: Check the status of any asynchronous job (image/video generation). Optional "Wait for Completion" mode automatically polls until the job finishes.
 - **Cancel Job**: Cancel a pending or running asynchronous job
 - **Upload Image**: Upload images to Adobe's storage for use in other operations
 
@@ -66,9 +66,10 @@ This node is optimized for use with n8n's AI Agent workflows:
 ### Tips for Agent Workflows
 
 1. **Image Upload**: When using with chat agents, ensure the previous node outputs binary data with a `Binary_Property` field
-2. **Job Polling**: Use the Get Job Status operation in loops to wait for async jobs to complete
+2. **Job Polling**: Enable "Wait for Completion" in Get Job Status to automatically wait for async jobs to finish (no loops needed!)
 3. **Error Handling**: Enable "Continue on Fail" to allow agents to retry with corrected inputs
 4. **Style Consistency**: Use seeds to generate consistent results across multiple agent calls
+5. **Timeout Configuration**: Adjust the timeout for complex operations (video generation typically takes 2-5 minutes)
 
 See the [sample-workflows](./sample-workflows) directory for pre-configured agent workflow examples.
 
@@ -131,9 +132,15 @@ n8n-nodes-adobe-firefly/
 │   ├── rules/          # Development guidelines
 │   └── schema/         # OpenAPI specifications
 ├── clients/            # API client libraries
-│   ├── ffs-client.ts   # Firefly Services API client
-│   ├── ims-client.ts   # Adobe IMS authentication
-│   └── ffs-gen-image-job.d.ts  # Type definitions
+│   ├── firefly/        # Modular Firefly client (see clients/firefly/README.md)
+│   │   ├── operations/ # Individual operation implementations
+│   │   ├── types/      # TypeScript type definitions
+│   │   ├── firefly-client.ts  # Main orchestration class
+│   │   ├── index.ts    # Public exports
+│   │   └── README.md   # Client architecture documentation
+│   ├── substance-client.ts    # Substance 3D API client
+│   ├── ims-client.ts          # Adobe IMS authentication
+│   └── ffs-gen-image-job.d.ts # Job status type definitions
 ├── credentials/        # Credential types
 │   └── AdobeFireflyApi.credentials.ts
 ├── nodes/             # Node implementations
@@ -159,10 +166,24 @@ n8n-nodes-adobe-firefly/
 
 The node is built with a modular architecture:
 
-- **Client Layer**: Separate clients for Firefly API (`ffs-client.ts`) and IMS authentication (`ims-client.ts`)
-- **Operation Handlers**: Each operation is in its own file under `exec/` for better maintainability
+- **Modular Client Layer**:
+  - Firefly API client is organized into separate operation modules (see [clients/firefly/README.md](./clients/firefly/README.md))
+  - Substance 3D API client for 3D rendering and compositing
+  - IMS authentication client for Adobe Identity Management
+- **Operation Handlers**: Each n8n operation is in its own file under `exec/` for better maintainability
 - **Type Safety**: Full TypeScript types for all API requests and responses
+- **Separation of Concerns**: Types, operations, and orchestration are clearly separated
 - **Auto Authentication**: IMS client handles OAuth token management and refresh automatically
+
+#### Firefly Client Architecture
+
+The Firefly client follows a modular design pattern:
+
+- **Types** (`.d.ts` files): Request/response type definitions
+- **Operations** (`.ts` files): Individual API operation implementations
+- **Client Class**: Main orchestration that delegates to operations
+
+For detailed information on the Firefly client architecture, adding new operations, and testing, see [clients/firefly/README.md](./clients/firefly/README.md).
 
 ## Resources
 

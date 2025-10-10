@@ -8,7 +8,7 @@ import {
   FireflyClient,
   type GenerateSimilarImagesV3AsyncRequest,
   type ModelVersion,
-} from "../../../clients/ffs-client";
+} from "../../../clients/firefly";
 
 export async function executeGenerateSimilarImagesAsync(
   this: IExecuteFunctions,

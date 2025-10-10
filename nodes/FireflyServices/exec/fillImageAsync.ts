@@ -7,7 +7,7 @@ import {
 import {
   FireflyClient,
   type FillImageV3AsyncRequest,
-} from "../../../clients/ffs-client";
+} from "../../../clients/firefly";
 
 export async function executeFillImageAsync(
   this: IExecuteFunctions,

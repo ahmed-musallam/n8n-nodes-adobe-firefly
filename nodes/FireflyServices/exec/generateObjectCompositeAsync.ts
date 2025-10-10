@@ -7,7 +7,7 @@ import {
 import {
   FireflyClient,
   type GenerateObjectCompositeV3AsyncRequest,
-} from "../../../clients/ffs-client";
+} from "../../../clients/firefly";
 
 export async function executeGenerateObjectCompositeAsync(
   this: IExecuteFunctions,
