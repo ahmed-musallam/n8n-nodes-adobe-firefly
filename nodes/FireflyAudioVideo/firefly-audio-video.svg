@@ -1,22 +1,37 @@
-<svg width="60" height="60" viewBox="0 0 60 60" fill="none"
-    xmlns="http://www.w3.org/2000/svg">
-    <!-- Gradient background -->
-    <defs>
-        <linearGradient id="audioVideoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#FF0080;stop-opacity:1" />
-            <stop offset="50%" style="stop-color:#7928CA;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#4F46E5;stop-opacity:1" />
-        </linearGradient>
-    </defs>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 240 240">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke: #eb1000;
+        stroke-miterlimit: 10;
+        stroke-width: 5px;
+      }
 
-    <!-- Background circle -->
-    <circle cx="30" cy="30" r="28" fill="url(#audioVideoGrad)" opacity="0.15"/>
+      .cls-1, .cls-2 {
+        fill: #fff;
+      }
 
-    <!-- Waveform (audio) -->
-    <path d="M 15 30 L 15 20 M 20 30 L 20 15 M 25 30 L 25 10 M 30 30 L 30 8 M 35 30 L 35 10 M 40 30 L 40 15 M 45 30 L 45 20" stroke="url(#audioVideoGrad)" stroke-width="2.5" stroke-linecap="round"/>
+      .cls-3 {
+        fill: #eb1000;
+      }
 
-    <!-- Video play button -->
-    <circle cx="30" cy="45" r="8" fill="url(#audioVideoGrad)" opacity="0.3"/>
-    <path d="M 28 42 L 28 48 L 34 45 Z" fill="url(#audioVideoGrad)"/>
+      .cls-3, .cls-2 {
+        stroke-width: 0px;
+      }
+    </style>
+  </defs>
+  <path id="Vector" class="cls-3" d="M197,0H43C19.3,0,0,19.3,0,43v153.9c0,23.8,19.3,43,43,43h153.9c23.8,0,43-19.3,43-43V43c0-23.8-19.3-43-43-43Z"/>
+  <g>
+    <path id="Vector_2" data-name="Vector 2" class="cls-2" d="M179.4,184.1h25.6v8.3h-15.9v6h14v8.3h-14v12.4h-9.7v-35.1Z"/>
+    <path id="Vector_3" data-name="Vector 3" class="cls-2" d="M208.4,191.8h9.2v27.4h-9.2v-27.4Z"/>
+    <path id="Vector_4" data-name="Vector 4" class="cls-2" d="M214.6,186.7l3.3.7c1.3.3,2.2-1.2,1.3-2.2l-2.3-2.5c-.3-.3-.4-.8-.3-1.2l.7-3.3c.3-1.3-1.3-2.2-2.2-1.3l-2.5,2.3c-.3.3-.8.4-1.2.3l-3.3-.7c-1.3-.3-2.2,1.2-1.3,2.2l2.3,2.5c.3.3.4.8.3,1.2l-.7,3.3c-.3,1.3,1.3,2.2,2.2,1.3l2.5-2.3c.3-.3.8-.4,1.2-.3Z"/>
+  </g>
+  <g>
+    <g>
+      <path class="cls-1" d="M180,111.3c-1-.1-2,0-2.9.5l-23.6,11.8v20.7l23.6,11.8c2.6,1.3,5.7.2,6.9-2.3.4-.7.5-1.5.5-2.3v-35c0-2.6-2-4.8-4.6-5.1Z"/>
+      <path class="cls-1" d="M101.7,97.8c-8.5,0-15.5,7-15.5,15.5v41.4c0,8.5,7,15.5,15.5,15.5h41.4c8.5,0,15.5-7,15.5-15.5v-41.4c0-8.5-7-15.5-15.5-15.5h-41.4Z"/>
+    </g>
+    <path class="cls-1" d="M83.5,109.4c1.9-1.6,3.8-1.6,5.7,0l.4.4,20.5,20.5.4.3c1.8,1.4,4.4,1.1,5.8-.7,1.2-1.5,1.2-3.6,0-5l-.3-.4-5.3-5.3,1.2-1.2.4-.4c1.9-1.6,3.8-1.6,5.7,0l.4.4,19.3,19.3c-.8,8.1-7.4,14.4-15.6,14.8h-.8s-49.4,0-49.4,0c-8.5,0-15.6-6.4-16.4-14.8l27.6-27.6s.4-.4.4-.4ZM121.4,69.8c8.8,0,16,6.9,16.5,15.7v.8s0,39.5,0,39.5l-13.6-13.6-.6-.6c-5.2-4.5-11.7-4.5-16.9,0l-.6.6-1.3,1.3-9.4-9.4-.6-.6c-5.2-4.5-11.7-4.5-16.9,0l-.6.6-21.9,21.9v-39.5c0-8.8,6.9-16,15.7-16.5h.8s49.4,0,49.4,0ZM109,90.4h-.5c-2.3.3-3.9,2.3-3.6,4.6.2,1.9,1.7,3.4,3.6,3.6h.5s.5,0,.5,0c2.3-.3,3.9-2.3,3.6-4.6-.2-1.9-1.7-3.4-3.6-3.6h-.5Z"/>
+  </g>
 </svg>
-

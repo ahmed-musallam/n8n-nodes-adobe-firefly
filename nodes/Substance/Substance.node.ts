@@ -19,7 +19,7 @@ import {
 
 export class Substance implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "Substance 3D",
+    displayName: "Firefly -Substance 3D",
     name: "substance",
     icon: "file:substance.svg",
     group: ["transform"],
@@ -27,7 +27,7 @@ export class Substance implements INodeType {
     subtitle: '={{$parameter["operation"]}}',
     description: "Generate and manipulate 3D content with Adobe Substance 3D",
     defaults: {
-      name: "Substance 3D",
+      name: "Firefly - Substance 3D",
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],

@@ -22,7 +22,7 @@ import {
 
 export class FireflyAudioVideo implements INodeType {
   description: INodeTypeDescription = {
-    displayName: "Firefly Audio/Video",
+    displayName: "Firefly - Audio/Video",
     name: "fireflyAudioVideo",
     icon: "file:firefly-audio-video.svg",
     group: ["transform"],
@@ -31,7 +31,7 @@ export class FireflyAudioVideo implements INodeType {
     description:
       "Generate speech, avatars, reframe videos, transcribe, and dub with Adobe Firefly Audio/Video",
     defaults: {
-      name: "Firefly Audio/Video",
+      name: "Firefly Services - Audio/Video",
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],

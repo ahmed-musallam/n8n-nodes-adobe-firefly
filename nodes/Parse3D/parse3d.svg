@@ -1,24 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 234" width="240" height="234">
-    <defs>
-        <linearGradient id="parse3d-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#50E3C2;stop-opacity:1" />
-        </linearGradient>
-    </defs>
-    <!-- Wireframe 3D cube representation -->
-    <g stroke="url(#parse3d-gradient)" stroke-width="4" fill="none">
-        <!-- Back face -->
-        <path d="M 80 100 L 160 100 L 160 180 L 80 180 Z" opacity="0.4"/>
-        <!-- Front face -->
-        <path d="M 100 80 L 180 80 L 180 160 L 100 160 Z" opacity="1"/>
-        <!-- Connecting edges -->
-        <line x1="80" y1="100" x2="100" y2="80" opacity="0.7"/>
-        <line x1="160" y1="100" x2="180" y2="80" opacity="0.7"/>
-        <line x1="160" y1="180" x2="180" y2="160" opacity="0.7"/>
-        <line x1="80" y1="180" x2="100" y2="160" opacity="0.7"/>
-    </g>
-    <!-- Magnifying glass -->
-    <circle cx="190" cy="50" r="20" stroke="url(#parse3d-gradient)" stroke-width="4" fill="none"/>
-    <line x1="204" y1="64" x2="220" y2="80" stroke="url(#parse3d-gradient)" stroke-width="4" stroke-linecap="round"/>
-</svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 240 240">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+        stroke-width: 0px;
+      }
 
+      .cls-2 {
+        fill: none;
+        stroke: #fff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 9px;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0" y1="119.9" x2="239.9" y2="119.9" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffacff"/>
+      <stop offset=".2" stop-color="#ea9ff7"/>
+      <stop offset=".6" stop-color="#b47de4"/>
+      <stop offset="1" stop-color="#835fd2"/>
+    </linearGradient>
+  </defs>
+  <path id="Vector" class="cls-1" d="M197,0H43C19.3,0,0,19.3,0,43v153.9c0,23.8,19.3,43,43,43h153.9c23.8,0,43-19.3,43-43V43c0-23.8-19.3-43-43-43h.1Z"/>
+  <path class="cls-2" d="M176.8,113.9v-23.7c0-4.2-2.3-8.1-5.9-10.2l-41.4-23.7c-3.7-2.1-8.2-2.1-11.8,0l-41.4,23.7c-3.7,2.1-5.9,6-5.9,10.2v47.4c0,4.2,2.3,8.1,5.9,10.2l41.4,23.7c3.7,2.1,8.2,2.1,11.8,0"/>
+  <path class="cls-2" d="M123.6,173v-59.2"/>
+  <path class="cls-2" d="M123.6,113.9l51.7-29.8"/>
+  <path class="cls-2" d="M71.9,84l51.7,29.8"/>
+  <path class="cls-2" d="M165,176c2.5-10.2,10.5-18.2,20.7-20.7-10.2-2.5-18.2-10.5-20.7-20.7-2.5,10.2-10.5,18.2-20.7,20.7,10.2,2.5,18.2,10.5,20.7,20.7"/>
+</svg>
