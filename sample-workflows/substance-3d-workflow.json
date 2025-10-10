@@ -1,0 +1,232 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Holiday Campaign Video",
+        "formDescription": "Input an image, this tool will animate it.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "3d scene file",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".glb",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "buttonLabel": "Start"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [-496, 16],
+      "id": "481272c6-c119-4afc-bf2c-2ff6b55cf52e",
+      "name": "On form submission",
+      "webhookId": "2401604f-8171-4775-9423-09cb838a4e7f"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Done!",
+        "completionMessage": "={{ $json.result.outputSpace.files.map(f => f.url).map(u => `<img src=\"${u}\"><br>`).join(\" \") }}",
+        "options": {
+          "customCss": "=\n\n\n:root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #ff6d5a;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 80%;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n\n\n    img {\n     max-width: 100%;\n    }\n} "
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [848, 16],
+      "id": "b58ddfda-a541-4d62-9e38-8335ab60a834",
+      "name": "Show Result",
+      "webhookId": "f20a9965-7ddf-4e44-bf28-00f31501ce23"
+    },
+    {
+      "parameters": {
+        "operation": "createSpace",
+        "binaryProperty": "=3d_scene_file",
+        "filename": "={{ $('On form submission').item.json['3d scene file'].filename }}",
+        "name": "={{ $('On form submission').item.json['3d scene file'].filename }}"
+      },
+      "type": "CUSTOM.substance",
+      "typeVersion": 1,
+      "position": [-48, -80],
+      "id": "4be0d5bc-cdc7-4458-b6fd-99fcc7e79db9",
+      "name": "Create Space",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sources": "=[{\"space\": {\"id\": \"{{ $json.id }}\"}}]",
+        "prompt": "={{ $json.Prompt }}",
+        "heroAsset": "={{ $('Pick Hero, Image and Prompt').item.json.Hero }}",
+        "composeOptions": {
+          "cameraName": "={{ $('Pick Hero, Image and Prompt').item.json.Camera }}"
+        }
+      },
+      "type": "CUSTOM.substance",
+      "typeVersion": 1,
+      "position": [400, 16],
+      "id": "70f02952-8a10-43c3-81bc-004e2026c05d",
+      "name": "Compose Scene",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "waitForJob",
+        "jobId": "={{ $json.id }}",
+        "pollingInterval": 5,
+        "timeout": 3
+      },
+      "type": "CUSTOM.substance",
+      "typeVersion": 1,
+      "position": [624, 16],
+      "id": "27a22156-667f-4d0c-a917-f33b4708b06d",
+      "name": "wait for job",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "binaryProperty": "3d_scene_file",
+        "options": {}
+      },
+      "type": "CUSTOM.parse3D",
+      "typeVersion": 1,
+      "position": [-272, 112],
+      "id": "cadfccaf-e11b-4832-81f2-42e3caf4bf8f",
+      "name": "Parse 3D File"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [176, 16],
+      "id": "77e45cfc-3be9-415e-a62d-93bf599e9dec",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "defineForm": "json",
+        "jsonOutput": "=[\n {\n    \"fieldLabel\": \"Hero\",\n    \"fieldType\": \"dropdown\",\n    \"fieldOptions\": {\n      \"values\": {{JSON.stringify($json.nodes.names.map(n => { return {option: n} }))}}\n    },\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Camera\",\n    \"fieldType\": \"dropdown\",\n    \"fieldOptions\": {\n      \"values\": {{ JSON.stringify($json.cameras.names.map(n => { return {option: n} }))}}\n    },\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Prompt\",\n    \"fieldType\": \"textarea\"\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [-48, 112],
+      "id": "718dc6d9-b69c-46e1-838e-2d0c67a87359",
+      "name": "Pick Hero, Image and Prompt",
+      "webhookId": "05f4fa6a-187b-4f94-805d-47351133becd",
+      "alwaysOutputData": true
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Parse 3D File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Space",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Space": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compose Scene": {
+      "main": [
+        [
+          {
+            "node": "wait for job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "wait for job": {
+      "main": [
+        [
+          {
+            "node": "Show Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse 3D File": {
+      "main": [
+        [
+          {
+            "node": "Pick Hero, Image and Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Compose Scene",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Hero, Image and Prompt": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f32a6dab1cb21d21c71dc98697cfca18dbb21ac762a44e185b905684a8455836"
+  }
+}
