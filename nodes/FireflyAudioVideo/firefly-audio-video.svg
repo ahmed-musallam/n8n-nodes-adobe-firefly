@@ -1,0 +1,22 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none"
+    xmlns="http://www.w3.org/2000/svg">
+    <!-- Gradient background -->
+    <defs>
+        <linearGradient id="audioVideoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF0080;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#7928CA;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#4F46E5;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+
+    <!-- Background circle -->
+    <circle cx="30" cy="30" r="28" fill="url(#audioVideoGrad)" opacity="0.15"/>
+
+    <!-- Waveform (audio) -->
+    <path d="M 15 30 L 15 20 M 20 30 L 20 15 M 25 30 L 25 10 M 30 30 L 30 8 M 35 30 L 35 10 M 40 30 L 40 15 M 45 30 L 45 20" stroke="url(#audioVideoGrad)" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Video play button -->
+    <circle cx="30" cy="45" r="8" fill="url(#audioVideoGrad)" opacity="0.3"/>
+    <path d="M 28 42 L 28 48 L 34 45 Z" fill="url(#audioVideoGrad)"/>
+</svg>
+

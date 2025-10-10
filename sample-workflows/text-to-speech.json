@@ -1,0 +1,194 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Text To Speech",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "text",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [0, 8],
+      "id": "d2a90203-0b89-4739-9c8a-4a7b8acc7550",
+      "name": "On form submission",
+      "webhookId": "dcebec58-812e-4cc0-89fb-d3cee45051f5"
+    },
+    {
+      "parameters": {
+        "operation": "getVoices"
+      },
+      "type": "CUSTOM.fireflyAudioVideo",
+      "typeVersion": 1,
+      "position": [224, -112],
+      "id": "86d61752-954e-4268-bd67-efd43e74c568",
+      "name": "Get Voices",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "scriptInput": "={{ $json.text }}",
+        "voiceId": "={{ $json.voice }}"
+      },
+      "type": "CUSTOM.fireflyAudioVideo",
+      "typeVersion": 1,
+      "position": [896, 8],
+      "id": "556562e2-2380-43e0-bf99-7cebd48e926d",
+      "name": "Firefly Audio/Video",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "defineForm": "json",
+        "jsonOutput": "=[\n  {\n    \"fieldLabel\": \"voice\",\n    \"fieldType\": \"dropdown\",\n    \"fieldOptions\": {\n      \"values\": [\n       {{$json.voices.map(v => v.voiceId).map(v => `{\"option\":\"${v}\"}`).join()}}\n      ]\n    },\n    \"requiredField\": true\n  }\n]\n",
+        "options": {
+          "formTitle": "Select Voice"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [448, -112],
+      "id": "8c99ca8f-0797-4726-9051-bf93886f3e57",
+      "name": "select voice",
+      "webhookId": "7873a8b4-ba1d-48da-ab01-5ca22ea12152"
+    },
+    {
+      "parameters": {
+        "operation": "waitForJob",
+        "jobId": "={{ $json.jobId }}"
+      },
+      "type": "CUSTOM.fireflyAudioVideo",
+      "typeVersion": 1,
+      "position": [1120, 8],
+      "id": "eb70e8c0-730b-42f5-b46b-ac754ac0541d",
+      "name": "wait for job",
+      "credentials": {
+        "fireflyServicesApi": {
+          "id": "FCkqkLfuqPOyRdv4",
+          "name": "Firefly Credentials - MSFT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Done!",
+        "completionMessage": "=<audio controls src=\"{{$json.output.destination.url}}\"></audio>\n<a href=\"{{$json.output.destination.url}}\"> Download audio </a",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [1344, 8],
+      "id": "9b38fdab-8c7e-4457-b532-8dd034cbad62",
+      "name": "Form",
+      "webhookId": "365d304b-65d6-4c34-abbe-e3eaebc08fac"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [672, 8],
+      "id": "61d5d605-e045-42b4-b4b6-a8ba7c32318a",
+      "name": "Merge"
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Get Voices",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get Voices": {
+      "main": [
+        [
+          {
+            "node": "select voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Firefly Audio/Video": {
+      "main": [
+        [
+          {
+            "node": "wait for job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "select voice": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "wait for job": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Firefly Audio/Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f32a6dab1cb21d21c71dc98697cfca18dbb21ac762a44e185b905684a8455836"
+  }
+}
