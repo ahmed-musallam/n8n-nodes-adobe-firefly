@@ -10,7 +10,9 @@ import { IMSClient } from "../../clients/ims-client";
 import { SubstanceClient } from "../../clients/substance";
 import {
   executeComposeScene,
+  executeConvertModel,
   executeCreateSpace,
+  executeDescribeScene,
   executeGetJobStatus,
   executeWaitForJob,
 } from "./exec";
@@ -43,17 +45,29 @@ export class Substance implements INodeType {
         noDataExpression: true,
         options: [
           {
-            name: "Generate 3D Object Composite",
-            value: "composeScene",
-            description:
-              "Generate a 3D object composite with AI-generated background",
-            action: "Generate 3D object composite",
+            name: "Convert Model",
+            value: "convertModel",
+            description: "Convert 3D model to another format",
+            action: "Convert 3D model format",
           },
           {
             name: "Create Space",
             value: "createSpace",
             description: "Upload 3D files to create a space",
             action: "Create space from 3D files",
+          },
+          {
+            name: "Describe Scene",
+            value: "describeScene",
+            description: "Get metadata and statistics about a 3D scene",
+            action: "Describe 3D scene",
+          },
+          {
+            name: "Generate 3D Object Composite",
+            value: "composeScene",
+            description:
+              "Generate a 3D object composite with AI-generated background",
+            action: "Generate 3D object composite",
           },
           {
             name: "Get Job Status",
@@ -251,6 +265,102 @@ export class Substance implements INodeType {
       },
 
       // ============================================
+      // Describe Scene
+      // ============================================
+      {
+        displayName: "Sources (JSON)",
+        name: "sources",
+        type: "string",
+        typeOptions: {
+          rows: 5,
+        },
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["describeScene"],
+          },
+        },
+        default: '[{"space": {"id": "your-space-id"}}]',
+        // eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
+        placeholder: '[{"space": {"id": "your-space-id"}}]',
+        description:
+          'Array of MountedSource objects (JSON). Example with space ID: [{"space": {"ID": "..."}}] or with URL: [{"URL": {"URL": "https://..."}}].',
+      },
+      {
+        displayName: "Scene File",
+        name: "sceneFile",
+        type: "string",
+        displayOptions: {
+          show: {
+            operation: ["describeScene"],
+          },
+        },
+        default: "",
+        placeholder: "model.usdz",
+        description:
+          "Path to the scene file within the mounted sources. Optional if sources contain only one file.",
+      },
+
+      // ============================================
+      // Convert Model
+      // ============================================
+      {
+        displayName: "Sources (JSON)",
+        name: "sources",
+        type: "string",
+        typeOptions: {
+          rows: 5,
+        },
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["convertModel"],
+          },
+        },
+        default: '[{"space": {"id": "your-space-id"}}]',
+        // eslint-disable-next-line n8n-nodes-base/node-param-placeholder-miscased-id
+        placeholder: '[{"space": {"id": "your-space-id"}}]',
+        description:
+          'Array of MountedSource objects (JSON). Example with space ID: [{"space": {"ID": "..."}}] or with URL: [{"URL": {"URL": "https://..."}}].',
+      },
+      {
+        displayName: "Output Format",
+        name: "format",
+        type: "options",
+        required: true,
+        displayOptions: {
+          show: {
+            operation: ["convertModel"],
+          },
+        },
+        options: [
+          { name: "FBX", value: "fbx" },
+          { name: "GLB", value: "glb" },
+          { name: "glTF", value: "gltf" },
+          { name: "OBJ", value: "obj" },
+          { name: "USD (ASCII)", value: "usda" },
+          { name: "USD (Binary)", value: "usdc" },
+          { name: "USDZ", value: "usdz" },
+        ],
+        default: "glb",
+        description: "The target 3D format for conversion",
+      },
+      {
+        displayName: "Model Entrypoint",
+        name: "modelEntrypoint",
+        type: "string",
+        displayOptions: {
+          show: {
+            operation: ["convertModel"],
+          },
+        },
+        default: "",
+        placeholder: "model.fbx",
+        description:
+          "Path to the model file within the mounted sources. Optional if sources contain only one file.",
+      },
+
+      // ============================================
       // Create Space
       // ============================================
       {
@@ -396,8 +506,24 @@ export class Substance implements INodeType {
             );
             break;
 
+          case "convertModel":
+            responseData = await executeConvertModel.call(
+              this,
+              i,
+              substanceClient,
+            );
+            break;
+
           case "createSpace":
             responseData = await executeCreateSpace.call(
+              this,
+              i,
+              substanceClient,
+            );
+            break;
+
+          case "describeScene":
+            responseData = await executeDescribeScene.call(
               this,
               i,
               substanceClient,
