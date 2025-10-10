@@ -130,29 +130,6 @@
     },
     {
       "parameters": {
-        "formFields": {
-          "values": [
-            {
-              "fieldType": "html",
-              "elementName": "Video Result:",
-              "html": "<video controls >\n  <source src=\"{{ $json.result.outputs[0].video.url }}\" type=\"video/mp4\" />\n  Download the\n  <a href=\"{{ $json.result.outputs[0].video.url }}\">MP4</a>\n</video>\n<br>\n<a class=\"download\" href=\"{{ $json.result.outputs[0].video.url }}\" download>Download</a>\n"
-            }
-          ]
-        },
-        "options": {
-          "buttonLabel": "Done!",
-          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #ff6d5a;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 100%;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n    video {\n      margin: 0 auto;\n      max-width: 100%;\n    }\n    .download {\n      padding: 10px;\n      background: \n    }\n}"
-        }
-      },
-      "type": "n8n-nodes-base.form",
-      "typeVersion": 2.3,
-      "position": [1104, 96],
-      "id": "6bebc695-3518-49c6-ad4a-07d25fb4e9c1",
-      "name": "Preview",
-      "webhookId": "4b60095c-ed0e-4408-991d-bb477b989c75"
-    },
-    {
-      "parameters": {
         "operation": "generateVideoAsync",
         "videoPrompt": "={{ $json['Override Prompt'].length ? $json['video prompt'] : $('Describe Image').item.json.content }}",
         "videoOptions": {
@@ -180,13 +157,16 @@
       "parameters": {
         "operation": "completion",
         "completionTitle": "Done!",
-        "options": {}
+        "completionMessage": "=\n\n<video controls >\n  <source src=\"{{ $json.result.outputs[0].video.url }}\" type=\"video/mp4\" />\n  Download the\n  <a href=\"{{ $json.result.outputs[0].video.url }}\">MP4</a>\n</video>\n<br>\n<br>\n<em>\n  {{ $('Confirm Prompt').item.json['Override Prompt'].length ?  $('Confirm Prompt').item.json['Override Prompt'] : $('Describe Image').item.json.content}}\n<em>\n<br>\n<br>\n<a class=\"download\" href=\"{{ $json.result.outputs[0].video.url }}\" download>Download</a>\n",
+        "options": {
+          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #ff6d5a;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 80%;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n\n    video {\n      margin: 0 auto;\n      max-width: 100%;\n    }\n    .download {\n      padding: 10px;\n      background: \n    }\n    .prompt {\n      border: 1px solid rgba(0, 0, 0, 0.05);\n      border-radius: 5px;\n      padding: 10px;\n    }\n}"
+        }
       },
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.3,
-      "position": [1328, 96],
+      "position": [1120, 96],
       "id": "f1d1d9d2-c01a-4ba1-a100-7452b0dd8903",
-      "name": "Form",
+      "name": "Show Result",
       "webhookId": "f20a9965-7ddf-4e44-bf28-00f31501ce23"
     }
   ],
@@ -244,7 +224,7 @@
       "main": [
         [
           {
-            "node": "Preview",
+            "node": "Show Result",
             "type": "main",
             "index": 0
           }
@@ -262,17 +242,6 @@
         ]
       ]
     },
-    "Preview": {
-      "main": [
-        [
-          {
-            "node": "Form",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Generate video": {
       "main": [
         [
@@ -284,7 +253,7 @@
         ]
       ]
     },
-    "Form": {
+    "Show Result": {
       "main": [[]]
     }
   },
