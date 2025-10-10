@@ -138,7 +138,12 @@ n8n-nodes-adobe-firefly/
 │   │   ├── firefly-client.ts  # Main orchestration class
 │   │   ├── index.ts    # Public exports
 │   │   └── README.md   # Client architecture documentation
-│   ├── substance-client.ts    # Substance 3D API client
+│   ├── substance/      # Modular Substance 3D client (see clients/substance/README.md)
+│   │   ├── operations/ # Individual operation implementations
+│   │   ├── types/      # TypeScript type definitions
+│   │   ├── substance-client.ts # Main orchestration class
+│   │   ├── index.ts    # Public exports
+│   │   └── README.md   # Client architecture documentation
 │   ├── ims-client.ts          # Adobe IMS authentication
 │   └── ffs-gen-image-job.d.ts # Job status type definitions
 ├── credentials/        # Credential types
@@ -168,22 +173,25 @@ The node is built with a modular architecture:
 
 - **Modular Client Layer**:
   - Firefly API client is organized into separate operation modules (see [clients/firefly/README.md](./clients/firefly/README.md))
-  - Substance 3D API client for 3D rendering and compositing
+  - Substance 3D API client is organized into separate operation modules (see [clients/substance/README.md](./clients/substance/README.md))
   - IMS authentication client for Adobe Identity Management
 - **Operation Handlers**: Each n8n operation is in its own file under `exec/` for better maintainability
 - **Type Safety**: Full TypeScript types for all API requests and responses
 - **Separation of Concerns**: Types, operations, and orchestration are clearly separated
 - **Auto Authentication**: IMS client handles OAuth token management and refresh automatically
 
-#### Firefly Client Architecture
+#### Client Architecture
 
-The Firefly client follows a modular design pattern:
+Both Firefly and Substance 3D clients follow the same modular design pattern:
 
 - **Types** (`.d.ts` files): Request/response type definitions
 - **Operations** (`.ts` files): Individual API operation implementations
 - **Client Class**: Main orchestration that delegates to operations
 
-For detailed information on the Firefly client architecture, adding new operations, and testing, see [clients/firefly/README.md](./clients/firefly/README.md).
+For detailed information:
+
+- **Firefly client**: See [clients/firefly/README.md](./clients/firefly/README.md)
+- **Substance 3D client**: See [clients/substance/README.md](./clients/substance/README.md)
 
 ## Resources
 
