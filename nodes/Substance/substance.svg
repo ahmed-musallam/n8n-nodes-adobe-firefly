@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 234" width="240" height="234">
+    <defs>
+        <linearGradient id="substance-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FF3366;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#9933FF;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <!-- 3D cube representation -->
+    <path fill="url(#substance-gradient)" d="M120 10 L200 60 L200 160 L120 210 L40 160 L40 60 Z" opacity="0.9"/>
+    <path fill="url(#substance-gradient)" d="M120 10 L200 60 L120 110 L40 60 Z" opacity="1"/>
+    <path fill="url(#substance-gradient)" d="M120 110 L120 210 L200 160 L200 60 Z" opacity="0.7"/>
+</svg>
+

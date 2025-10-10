@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-firefly-services",
   "version": "0.1.0",
-  "description": "n8n community node for Adobe Firefly Services - Generate images, videos, and edit photos using Adobe's generative AI",
+  "description": "n8n community node for Adobe Firefly Services and Substance 3D - Generate images, videos, 3D content, and edit photos using Adobe's generative AI",
   "license": "MIT",
   "homepage": "https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly",
   "keywords": [
@@ -9,10 +9,13 @@
     "n8n",
     "adobe",
     "firefly",
+    "substance-3d",
     "ai",
     "generative-ai",
     "image-generation",
     "video-generation",
+    "3d-generation",
+    "3d-rendering",
     "image-editing",
     "text-to-image",
     "text-to-video"
@@ -43,7 +46,9 @@
       "dist/credentials/FireflyServicesApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/FireflyServices/FireflyServices.node.js"
+      "dist/nodes/FireflyServices/FireflyServices.node.js",
+      "dist/nodes/Parse3D/Parse3D.node.js",
+      "dist/nodes/Substance/Substance.node.js"
     ]
   },
   "devDependencies": {
@@ -56,5 +61,8 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "^4.2.1"
   }
 }
