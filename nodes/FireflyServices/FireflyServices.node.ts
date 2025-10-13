@@ -1059,6 +1059,15 @@ export class FireflyServices implements INodeType {
         },
         options: [
           {
+            displayName: "Beginning Keyframe Upload ID",
+            name: "beginningKeyframeUploadId",
+            type: "string",
+            default: "",
+            placeholder: "123e4567-e89b-12d3-a456-426614174000",
+            description:
+              "Upload ID from storage API to use as the first frame of the video (position 0)",
+          },
+          {
             displayName: "Bit Rate Factor",
             name: "bitRateFactor",
             type: "number",
@@ -1088,31 +1097,13 @@ export class FireflyServices implements INodeType {
             description: "Camera movement control for the video",
           },
           {
-            displayName: "Keyframe Image Upload ID",
-            name: "keyframeUploadId",
+            displayName: "Ending Keyframe Upload ID",
+            name: "endingKeyframeUploadId",
             type: "string",
             default: "",
             placeholder: "123e4567-e89b-12d3-a456-426614174000",
             description:
-              "Upload ID from storage API to use as keyframe (first or last frame)",
-          },
-          {
-            displayName: "Keyframe Position",
-            name: "keyframePosition",
-            type: "number",
-            default: 0,
-            typeOptions: {
-              minValue: 0,
-              maxValue: 1,
-              numberPrecision: 2,
-            },
-            description:
-              "Position of keyframe: 0 = first frame, 1 = last frame",
-            displayOptions: {
-              show: {
-                "/videoOptions.keyframeUploadId": [{ _cnd: { not: "" } }],
-              },
-            },
+              "Upload ID from storage API to use as the last frame of the video (position 1)",
           },
           {
             displayName: "Prompt Style",

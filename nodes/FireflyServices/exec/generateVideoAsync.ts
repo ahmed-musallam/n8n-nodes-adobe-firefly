@@ -49,27 +49,46 @@ export async function executeGenerateVideoAsync(
     requestBody.sizes = [{ width, height }];
   }
 
-  // Build keyframe image if specified
-  if (
-    videoOptions.keyframeUploadId &&
-    (videoOptions.keyframeUploadId as string).length > 0
-  ) {
-    const position =
-      videoOptions.keyframePosition !== undefined
-        ? (videoOptions.keyframePosition as number)
-        : 0;
+  // Build keyframe images if specified
+  const conditions: Array<{
+    source: { uploadId: string };
+    placement: { position: number };
+  }> = [];
 
+  // Add beginning keyframe (position 0)
+  if (
+    videoOptions.beginningKeyframeUploadId &&
+    (videoOptions.beginningKeyframeUploadId as string).length > 0
+  ) {
+    conditions.push({
+      source: {
+        uploadId: videoOptions.beginningKeyframeUploadId as string,
+      },
+      placement: {
+        position: 0,
+      },
+    });
+  }
+
+  // Add ending keyframe (position 1)
+  if (
+    videoOptions.endingKeyframeUploadId &&
+    (videoOptions.endingKeyframeUploadId as string).length > 0
+  ) {
+    conditions.push({
+      source: {
+        uploadId: videoOptions.endingKeyframeUploadId as string,
+      },
+      placement: {
+        position: 1,
+      },
+    });
+  }
+
+  // Add keyframes to request if any were specified
+  if (conditions.length > 0) {
     requestBody.image = {
-      conditions: [
-        {
-          source: {
-            uploadId: videoOptions.keyframeUploadId as string,
-          },
-          placement: {
-            position,
-          },
-        },
-      ],
+      conditions,
     };
   }
 
