@@ -67,7 +67,7 @@
       "credentials": {
         "fireflyServicesApi": {
           "id": "FCkqkLfuqPOyRdv4",
-          "name": "Firefly Services account"
+          "name": "Firefly Credentials - MSFT"
         }
       }
     },
@@ -79,7 +79,7 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [208, 96],
+      "position": [416, 96],
       "id": "4e0bb479-325c-4877-8ff7-d2913331e8db",
       "name": "Merge"
     },
@@ -98,7 +98,7 @@
       "credentials": {
         "fireflyServicesApi": {
           "id": "FCkqkLfuqPOyRdv4",
-          "name": "Firefly Services account"
+          "name": "Firefly Credentials - MSFT"
         }
       }
     },
@@ -114,6 +114,11 @@
               "fieldLabel": "Override Prompt",
               "fieldType": "textarea",
               "placeholder": "=copy from above or start fresh"
+            },
+            {
+              "fieldName": "Generated Prompt",
+              "fieldType": "hiddenField",
+              "fieldValue": "={{ $json.content }}"
             }
           ]
         },
@@ -123,7 +128,7 @@
       },
       "type": "n8n-nodes-base.form",
       "typeVersion": 2.3,
-      "position": [432, 96],
+      "position": [192, 0],
       "id": "a3f0d94b-2f72-48a7-a124-de089a476ef6",
       "name": "Confirm Prompt",
       "webhookId": "a34fe450-7944-49b5-9cda-86fc894f5afd"
@@ -131,14 +136,14 @@
     {
       "parameters": {
         "operation": "generateVideoAsync",
-        "videoPrompt": "={{ $json['Override Prompt'].length ? $json['video prompt'] : $('Describe Image').item.json.content }}",
+        "videoPrompt": "={{ $json['Override Prompt'].length ? $json['Override Prompt'] : $json['Generated Prompt']}}",
         "videoOptions": {
+          "beginningKeyframeUploadId": "={{ $json.images[0].id }}",
           "bitRateFactor": 20,
           "cameraMotion": "camera locked down",
-          "keyframeUploadId": "={{ $('upload').item.json.images[0].id }}",
-          "keyframePosition": 1,
+          "endingKeyframeUploadId": "={{ $json.images[0].id }}",
           "shotAngle": "eye_level shot",
-          "videoSize": "960x540"
+          "videoSize": "1280x720"
         }
       },
       "type": "CUSTOM.fireflyServices",
@@ -149,7 +154,7 @@
       "credentials": {
         "fireflyServicesApi": {
           "id": "FCkqkLfuqPOyRdv4",
-          "name": "Firefly Services account"
+          "name": "Firefly Credentials - MSFT"
         }
       }
     },
@@ -157,9 +162,9 @@
       "parameters": {
         "operation": "completion",
         "completionTitle": "Done!",
-        "completionMessage": "=\n\n<video controls >\n  <source src=\"{{ $json.result.outputs[0].video.url }}\" type=\"video/mp4\" />\n  Download the\n  <a href=\"{{ $json.result.outputs[0].video.url }}\">MP4</a>\n</video>\n<br>\n<br>\n<em>\n  {{ $('Confirm Prompt').item.json['Override Prompt'].length ?  $('Confirm Prompt').item.json['Override Prompt'] : $('Describe Image').item.json.content}}\n<em>\n<br>\n<br>\n<a class=\"download\" href=\"{{ $json.result.outputs[0].video.url }}\" download>Download</a>\n",
+        "completionMessage": "=\n\n<video controls autoplay loop muted>\n  <source src=\"{{ $json.result.outputs[0].video.url }}\" type=\"video/mp4\" />\n  Download the\n  <a href=\"{{ $json.result.outputs[0].video.url }}\">MP4</a>\n</video>\n<br>\n<br>\n<em><strong>\n  {{ $('Confirm Prompt').item.json['Override Prompt'].length ?  $('Confirm Prompt').item.json['Override Prompt'] : $('Describe Image').item.json.content}}\n</strong></em>\n<br>\n<br>\n<em><a href=\"{{ $json.result.outputs[0].video.url }}\" download>Download</a></em>\n\n",
         "options": {
-          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #ff6d5a;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 80%;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n\n    video {\n      margin: 0 auto;\n      max-width: 100%;\n    }\n    .download {\n      padding: 10px;\n      background: \n    }\n    .prompt {\n      border: 1px solid rgba(0, 0, 0, 0.05);\n      border-radius: 5px;\n      padding: 10px;\n    }\n}"
+          "customCss": ":root {\n\t--font-family: 'Open Sans', sans-serif;\n\t--font-weight-normal: 400;\n\t--font-weight-bold: 600;\n\t--font-size-body: 12px;\n\t--font-size-label: 14px;\n\t--font-size-test-notice: 12px;\n\t--font-size-input: 14px;\n\t--font-size-header: 20px;\n\t--font-size-paragraph: 14px;\n\t--font-size-link: 12px;\n\t--font-size-error: 12px;\n\t--font-size-html-h1: 28px;\n\t--font-size-html-h2: 20px;\n\t--font-size-html-h3: 16px;\n\t--font-size-html-h4: 14px;\n\t--font-size-html-h5: 12px;\n\t--font-size-html-h6: 10px;\n\t--font-size-subheader: 14px;\n\n\t/* Colors */\n\t--color-background: #fbfcfe;\n\t--color-test-notice-text: #e6a23d;\n\t--color-test-notice-bg: #fefaf6;\n\t--color-test-notice-border: #f6dcb7;\n\t--color-card-bg: #ffffff;\n\t--color-card-border: #dbdfe7;\n\t--color-card-shadow: rgba(99, 77, 255, 0.06);\n\t--color-link: #7e8186;\n\t--color-header: #525356;\n\t--color-label: #555555;\n\t--color-input-border: #dbdfe7;\n\t--color-input-text: #71747A;\n\t--color-focus-border: rgb(90, 76, 194);\n\t--color-submit-btn-bg: #ff6d5a;\n\t--color-submit-btn-text: #ffffff;\n\t--color-error: #ea1f30;\n\t--color-required: #ff6d5a;\n\t--color-clear-button-bg: #7e8186;\n\t--color-html-text: #555;\n\t--color-html-link: #ff6d5a;\n\t--color-header-subtext: #7e8186;\n\n\t/* Border Radii */\n\t--border-radius-card: 8px;\n\t--border-radius-input: 6px;\n\t--border-radius-clear-btn: 50%;\n\t--card-border-radius: 8px;\n\n\t/* Spacing */\n\t--padding-container-top: 24px;\n\t--padding-card: 24px;\n\t--padding-test-notice-vertical: 12px;\n\t--padding-test-notice-horizontal: 24px;\n\t--margin-bottom-card: 16px;\n\t--padding-form-input: 12px;\n\t--card-padding: 24px;\n\t--card-margin-bottom: 16px;\n\n\t/* Dimensions */\n\t--container-width: 80%;\n\t--submit-btn-height: 48px;\n\t--checkbox-size: 18px;\n\n\t/* Others */\n\t--box-shadow-card: 0px 4px 16px 0px var(--color-card-shadow);\n\t--opacity-placeholder: 0.5;\n\n    video {\n      margin: 0 auto;\n      max-width: 100%;\n    }\n    em strong {\n        padding: 18px;\n        display: block;\n        background: #f5f5f5;\n    }\n    em a {\n      padding: 10px;\n      background: #eb1000;\n      border-radius: 5px;\n      text-decoration: none;\n      color: white;\n      font-style: normal;\n    }\n    .prompt {\n      border: 1px solid rgba(0, 0, 0, 0.05);\n      border-radius: 5px;\n      padding: 10px;\n    }\n}"
         }
       },
       "type": "n8n-nodes-base.form",
@@ -191,7 +196,7 @@
       "main": [
         [
           {
-            "node": "Merge",
+            "node": "Confirm Prompt",
             "type": "main",
             "index": 0
           }
@@ -213,7 +218,7 @@
       "main": [
         [
           {
-            "node": "Confirm Prompt",
+            "node": "Generate video",
             "type": "main",
             "index": 0
           }
@@ -235,7 +240,7 @@
       "main": [
         [
           {
-            "node": "Generate video",
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
