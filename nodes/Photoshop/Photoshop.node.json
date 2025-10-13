@@ -1,0 +1,19 @@
+{
+  "node": "n8n-nodes-base.photoshop",
+  "nodeVersion": "1.0",
+  "codex": {
+    "categories": ["AI", "Image Processing"],
+    "subcategories": {
+      "AI": ["Image Editing"],
+      "Image Processing": ["Manipulation"]
+    },
+    "resources": {
+      "primaryDocumentation": [
+        {
+          "url": "https://developer.adobe.com/photoshop/photoshop-api-docs/"
+        }
+      ]
+    }
+  }
+}
+
