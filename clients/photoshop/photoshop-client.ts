@@ -18,11 +18,7 @@ import { playPhotoshopActions } from "./operations/photoshop-actions";
 import { playActionJson, convertToActionJson } from "./operations/action-json";
 import { autoCrop } from "./operations/auto-crop";
 import { applyDepthBlur } from "./operations/depth-blur";
-import {
-  getJobStatus,
-  getMaskingJobStatus,
-  getMaskingJobStatusV1,
-} from "./operations/get-job-status";
+import { getJobStatus } from "./operations/get-job-status";
 
 /**
  * Client configuration options
@@ -254,32 +250,13 @@ export class PhotoshopClient {
   // ============================================
 
   /**
-   * Get the status of a Photoshop API job (PSD operations)
+   * Get the status of a Photoshop API job using the status URL
+   * Works for all Photoshop operations (PSD, masking, background removal, etc.)
    */
   async getJobStatus(
-    jobId: Parameters<typeof getJobStatus>[0],
+    statusUrl: Parameters<typeof getJobStatus>[0],
   ): Promise<ReturnType<typeof getJobStatus>> {
     const headers = await this.getHeaders();
-    return getJobStatus(jobId, headers);
-  }
-
-  /**
-   * Get the status of a masking/background removal job (v2)
-   */
-  async getMaskingJobStatus(
-    jobId: Parameters<typeof getMaskingJobStatus>[0],
-  ): Promise<ReturnType<typeof getMaskingJobStatus>> {
-    const headers = await this.getHeaders();
-    return getMaskingJobStatus(jobId, headers);
-  }
-
-  /**
-   * Get the status of a masking job (v1)
-   */
-  async getMaskingJobStatusV1(
-    jobId: Parameters<typeof getMaskingJobStatusV1>[0],
-  ): Promise<ReturnType<typeof getMaskingJobStatusV1>> {
-    const headers = await this.getHeaders();
-    return getMaskingJobStatusV1(jobId, headers);
+    return getJobStatus(statusUrl, headers);
   }
 }

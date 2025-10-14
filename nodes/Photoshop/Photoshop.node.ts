@@ -825,29 +825,14 @@ export class Photoshop implements INodeType {
 
       // ===== Get Job Status & Wait for Job =====
       {
-        displayName: "Job ID",
-        name: "jobId",
+        displayName: "Status URL",
+        name: "statusUrl",
         type: "string",
         required: true,
-        default: "={{ $json.jobId }}",
-        description: "The job ID from the async operation",
-        displayOptions: {
-          show: {
-            operation: ["getJobStatus", "waitForJob"],
-          },
-        },
-      },
-      {
-        displayName: "Job Type",
-        name: "jobType",
-        type: "options",
-        options: [
-          { name: "Masking (V1)", value: "maskingV1" },
-          { name: "Masking (V2)", value: "maskingV2" },
-          { name: "PSD Operations", value: "psd" },
-        ],
-        default: "maskingV2",
-        description: "Type of job to check",
+        default: "={{ $json.statusUrl }}",
+        description:
+          "The full status URL from the job submission response. Works for all Photoshop operations (PSD, masking, background removal, etc.)",
+        placeholder: "https://image.adobe.io/v2/status/abc-123",
         displayOptions: {
           show: {
             operation: ["getJobStatus", "waitForJob"],

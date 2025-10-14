@@ -15,8 +15,7 @@ export async function executeWaitForJob(
   i: number,
   photoshopClient: PhotoshopClient,
 ): Promise<IDataObject> {
-  const jobId = this.getNodeParameter("jobId", i) as string;
-  const jobType = this.getNodeParameter("jobType", i) as string;
+  const statusUrl = this.getNodeParameter("statusUrl", i) as string;
   const pollingInterval =
     (this.getNodeParameter("pollingInterval", i, 3) as number) * 1000;
   const timeoutMinutes = this.getNodeParameter("timeout", i, 5) as number;
@@ -24,42 +23,34 @@ export async function executeWaitForJob(
   const startTime = Date.now();
 
   Logger.info("Waiting for job completion...", {
-    jobId,
-    jobType,
+    statusUrl,
     pollingInterval,
     timeout: timeoutMinutes,
   });
 
   let attempts = 0;
+  let jobId = "unknown";
+
   while (true) {
     attempts++;
     const elapsed = Date.now() - startTime;
 
     if (elapsed > timeoutMs) {
       throw new ApplicationError(
-        `Job ${jobId} did not complete within ${timeoutMinutes} minutes. Last status check after ${attempts} attempts.`,
+        `Job did not complete within ${timeoutMinutes} minutes. Last status check after ${attempts} attempts.`,
       );
     }
 
-    let response;
+    const response = await photoshopClient.getJobStatus(statusUrl);
 
-    switch (jobType) {
-      case "psd":
-        response = await photoshopClient.getJobStatus(jobId);
-        break;
-      case "maskingV2":
-        response = await photoshopClient.getMaskingJobStatus(jobId);
-        break;
-      case "maskingV1":
-        response = await photoshopClient.getMaskingJobStatusV1(jobId);
-        break;
-      default:
-        throw new ApplicationError(`Unknown job type: ${jobType}`);
+    // Extract jobId from response for logging
+    if (response.jobId) {
+      jobId = response.jobId;
     }
 
     const status = response.status as string;
 
-    Logger.info(`Job status check #${attempts}:`, { status, elapsed });
+    Logger.info(`Job status check #${attempts}:`, { jobId, status, elapsed });
 
     const terminalStates = ["succeeded", "failed", "cancelled"];
     if (terminalStates.includes(status)) {
@@ -79,4 +70,3 @@ export async function executeWaitForJob(
     await sleep(pollingInterval);
   }
 }
-

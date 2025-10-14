@@ -1,7 +1,6 @@
 import {
   type IExecuteFunctions,
   type IDataObject,
-  ApplicationError,
   LoggerProxy as Logger,
 } from "n8n-workflow";
 import type { PhotoshopClient } from "../../../clients/photoshop";
@@ -11,29 +10,17 @@ export async function executeGetJobStatus(
   i: number,
   photoshopClient: PhotoshopClient,
 ): Promise<IDataObject> {
-  const jobId = this.getNodeParameter("jobId", i) as string;
-  const jobType = this.getNodeParameter("jobType", i) as string;
+  const statusUrl = this.getNodeParameter("statusUrl", i) as string;
 
-  Logger.info("Getting job status via PhotoshopClient...", { jobId, jobType });
+  Logger.info("Getting job status via PhotoshopClient...", { statusUrl });
 
-  let response;
+  const response = await photoshopClient.getJobStatus(statusUrl);
 
-  switch (jobType) {
-    case "psd":
-      response = await photoshopClient.getJobStatus(jobId);
-      break;
-    case "maskingV2":
-      response = await photoshopClient.getMaskingJobStatus(jobId);
-      break;
-    case "maskingV1":
-      response = await photoshopClient.getMaskingJobStatusV1(jobId);
-      break;
-    default:
-      throw new ApplicationError(`Unknown job type: ${jobType}`);
-  }
-
-  Logger.info("Get job status response:", { responseData: response });
+  Logger.info("Get job status response:", {
+    jobId: response.jobId,
+    status: response.status,
+    responseData: response,
+  });
 
   return response as unknown as IDataObject;
 }
-
