@@ -1,8 +1,8 @@
 # n8n-nodes-adobe-firefly
 
-This is an n8n community node. It lets you use Adobe Firefly Services and Audio/Video API in your n8n workflows.
+This is an n8n community node. It lets you use Adobe Firefly Services, Photoshop API, and Audio/Video API in your n8n workflows.
 
-Adobe Firefly is a generative AI service that allows you to create stunning images, videos, speech, and avatars from text prompts using Adobe's state-of-the-art AI models.
+Adobe Firefly is a generative AI service that allows you to create stunning images, videos, speech, and avatars from text prompts. The Photoshop API provides professional-grade image editing capabilities including AI-powered background removal, masking, and generative fill.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
@@ -48,6 +48,32 @@ For Docker-based deployments, add the package in your [data folder's](https://do
 
 - **Get Job Status**: Check the status of any asynchronous job (image/video generation). Optional "Wait for Completion" mode automatically polls until the job finishes.
 - **Cancel Job**: Cancel a pending or running asynchronous job
+
+### Photoshop API 🎨
+
+#### Background & Masking
+
+- **Remove Background**: AI-powered background removal from images with soft or binary mask output
+- **Mask Objects**: Create masks for specific objects (person, dog, cat, product, vehicle, etc.)
+- **Mask Body Parts**: Create masks for human body parts (face, hair, hands, legs, etc.)
+- **Refine Mask**: Adjust masks with feather, smoothness, contrast, edge shifting, and color decontamination
+- **Fill Masked Areas**: Fill masked regions with generative AI or content-aware fill
+
+#### PSD Operations
+
+- **Create Rendition**: Export PSD layers to various formats (PNG, JPEG, TIFF) with custom dimensions
+- **Edit Text Layer**: Modify text content, font, size, color, and alignment in PSD files
+- **Replace Smart Object**: Dynamically replace smart object content in PSD templates
+
+#### Effects
+
+- **Auto Crop**: Automatically crop images to content boundaries
+- **Depth Blur**: Apply depth-of-field blur with customizable focal point and blur strength
+
+#### Job Management
+
+- **Get Job Status**: Check the status of Photoshop API jobs (supports PSD operations, masking v1, and masking v2)
+- **Wait for Job**: Automatically poll until job completion with configurable timeout and polling interval
 
 ### Firefly Audio/Video
 
@@ -282,6 +308,7 @@ All three API clients (Firefly, Audio/Video, Substance 3D) follow the same modul
 For detailed information:
 
 - **Firefly client**: See [clients/firefly/README.md](./clients/firefly/README.md)
+- **Photoshop client**: See [clients/photoshop/README.md](./clients/photoshop/README.md)
 - **Audio/Video client**: See [clients/audio-video/README.md](./clients/audio-video/README.md)
 - **Substance 3D client**: See [clients/substance/README.md](./clients/substance/README.md)
 
@@ -290,11 +317,12 @@ For detailed information:
 | Node                    | Operations | Key Features                                          |
 | ----------------------- | ---------- | ----------------------------------------------------- |
 | **Firefly Services**    | 9          | Image/video generation, editing, job management       |
+| **Photoshop API**       | 12         | Background removal, masking, PSD editing, effects     |
 | **Firefly Audio/Video** | 9          | TTS, avatars, reframing, transcription, dubbing       |
 | **Substance 3D**        | 6          | 3D model conversion, composition, metadata extraction |
 | **Parse 3D**            | 1          | Local 3D file parsing (glTF/GLB)                      |
 
-**Total: 4 nodes, 25 operations**
+**Total: 5 nodes, 37 operations**
 
 ## Resources
 
@@ -306,6 +334,7 @@ For detailed information:
 ### Adobe API Documentation
 
 - [Adobe Firefly Services API](https://developer.adobe.com/firefly-services/docs/)
+- [Adobe Photoshop API](https://developer.adobe.com/photoshop/photoshop-api-docs/)
 - [Adobe Firefly Audio/Video API](https://developer.adobe.com/audio-video-firefly-services/)
 - [Adobe Substance 3D API](https://developer.adobe.com/substance3d-automation/)
 - [Adobe IMS Authentication](https://developer.adobe.com/developer-console/docs/guides/authentication/)

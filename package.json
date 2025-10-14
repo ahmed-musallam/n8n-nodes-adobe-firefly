@@ -4,32 +4,6 @@
   "description": "n8n community node for Adobe Firefly Services, Photoshop API, and Substance 3D - Generate images, videos, 3D content, and edit photos using Adobe's generative AI and professional editing tools",
   "license": "MIT",
   "homepage": "https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly",
-  "keywords": [
-    "n8n-community-node-package",
-    "n8n",
-    "adobe",
-    "firefly",
-    "substance-3d",
-    "ai",
-    "generative-ai",
-    "image-generation",
-    "video-generation",
-    "3d-generation",
-    "3d-rendering",
-    "image-editing",
-    "text-to-image",
-    "text-to-video",
-    "text-to-speech",
-    "avatar-generation",
-    "video-reframing",
-    "transcription",
-    "dubbing",
-    "lip-sync"
-  ],
-  "author": {
-    "name": "Ahmed",
-    "email": "musallam@adobe.com"
-  },
   "repository": {
     "type": "git",
     "url": ""
@@ -52,11 +26,52 @@
       "dist/credentials/FireflyServicesApi.credentials.js"
     ],
     "nodes": [
+      "dist/nodes/AwsS3PresignedUrl/AwsS3PresignedUrl.node.js",
       "dist/nodes/FireflyAudioVideo/FireflyAudioVideo.node.js",
       "dist/nodes/FireflyServices/FireflyServices.node.js",
+      "dist/nodes/JimpImageProcessing/JimpImageProcessing.node.js",
       "dist/nodes/Parse3D/Parse3D.node.js",
+      "dist/nodes/Photoshop/Photoshop.node.js",
       "dist/nodes/Substance/Substance.node.js"
     ]
+  },
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "adobe",
+    "firefly",
+    "photoshop",
+    "substance-3d",
+    "aws",
+    "s3",
+    "presigned-url",
+    "jimp",
+    "image-processing",
+    "image-resize",
+    "ai",
+    "generative-ai",
+    "image-generation",
+    "video-generation",
+    "3d-generation",
+    "3d-rendering",
+    "image-editing",
+    "photo-editing",
+    "background-removal",
+    "masking",
+    "generative-fill",
+    "smart-objects",
+    "text-to-image",
+    "text-to-video",
+    "text-to-speech",
+    "avatar-generation",
+    "video-reframing",
+    "transcription",
+    "dubbing",
+    "lip-sync"
+  ],
+  "author": {
+    "name": "Ahmed",
+    "email": "musallam@adobe.com"
   },
   "devDependencies": {
     "@n8n/node-cli": "*",
@@ -70,6 +85,7 @@
     "n8n-workflow": "*"
   },
   "dependencies": {
-    "@gltf-transform/core": "^4.2.1"
+    "@gltf-transform/core": "^4.2.1",
+    "jimp": "^1.6.0"
   }
 }
