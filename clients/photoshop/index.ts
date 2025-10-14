@@ -20,10 +20,14 @@ export type {
   CompressionLevel,
 } from "./types/common";
 
-// Remove background types
+// Remove background types (v2)
 export type {
-  RemoveBackgroundOutput,
-  RemoveBackgroundOptions,
+  UrlResource,
+  RemoveBgInputImage,
+  RemoveBgMode,
+  RemoveBgOutputMediaType,
+  RemoveBgOutputImageOptions,
+  RemoveBgColor,
   RemoveBackgroundRequest,
   RemoveBackgroundResponse,
 } from "./types/remove-background";
@@ -80,4 +84,3 @@ export type {
   AutoCropResponse,
   DepthBlurResponse,
 } from "./types/effects";
-

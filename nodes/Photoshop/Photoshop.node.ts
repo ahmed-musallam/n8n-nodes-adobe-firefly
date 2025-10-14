@@ -134,15 +134,16 @@ export class Photoshop implements INodeType {
         default: "removeBackground",
       },
 
-      // ===== Remove Background =====
+      // ===== Remove Background (v2) =====
       {
-        displayName: "Input Storage (JSON)",
-        name: "removeBackgroundInput",
-        type: "json",
-        default: '{\n  "href": "https://...",\n  "storage": "external"\n}',
+        displayName: "Image URL",
+        name: "removeBackgroundImageUrl",
+        type: "string",
+        default: "",
         required: true,
         description:
-          "Input storage configuration with href and optional storage type",
+          "URL of the image to process. Dimensions should not exceed 6000px × 6000px. Accepted domains: amazonaws.com, windows.net, dropboxusercontent.com, assets.frame.io, storage.googleapis.com",
+        placeholder: "https://example.amazonaws.com/image.jpg",
         displayOptions: {
           show: {
             operation: ["removeBackground"],
@@ -150,14 +151,28 @@ export class Photoshop implements INodeType {
         },
       },
       {
-        displayName: "Output Storage (JSON)",
-        name: "removeBackgroundOutput",
-        type: "json",
-        default:
-          '{\n  "href": "https://...",\n  "storage": "external",\n  "type": "image/png"\n}',
-        required: true,
-        description:
-          "Output storage configuration with href, storage type, and output format",
+        displayName: "Mode",
+        name: "removeBackgroundMode",
+        type: "options",
+        options: [
+          {
+            name: "Cutout",
+            value: "cutout",
+            description: "Remove background and return cutout image",
+          },
+          {
+            name: "Mask",
+            value: "mask",
+            description: "Return a mask of the foreground object",
+          },
+          {
+            name: "PSD",
+            value: "psd",
+            description: "Return a PSD with background and foreground layers",
+          },
+        ],
+        default: "cutout",
+        description: "The mode of background removal",
         displayOptions: {
           show: {
             operation: ["removeBackground"],
@@ -177,33 +192,103 @@ export class Photoshop implements INodeType {
         },
         options: [
           {
-            displayName: "Mask Format",
-            name: "maskFormat",
+            displayName: "Output Media Type",
+            name: "outputMediaType",
             type: "options",
             options: [
-              { name: "Binary", value: "binary" },
-              { name: "Soft", value: "soft" },
+              { name: "JPEG", value: "image/jpeg" },
+              { name: "PNG", value: "image/png" },
+              { name: "WebP", value: "image/webp" },
+              { name: "PSD", value: "image/vnd.adobe.photoshop" },
             ],
-            default: "soft",
-            description: "Type of mask to generate",
+            default: "image/png",
+            description:
+              "The media type of the output image. By default matches input format.",
           },
           {
-            displayName: "Optimize",
-            name: "optimize",
-            type: "options",
-            options: [
-              { name: "Performance", value: "performance" },
-              { name: "Batch", value: "batch" },
-            ],
-            default: "performance",
-            description: "Optimization mode for processing",
-          },
-          {
-            displayName: "Postprocess",
-            name: "postprocess",
+            displayName: "Trim",
+            name: "trim",
             type: "boolean",
             default: false,
-            description: "Whether to apply post-processing to the result",
+            description:
+              "Whether to crop the image to the cutout border (removes transparent pixels)",
+          },
+          {
+            displayName: "Background Color",
+            name: "backgroundColor",
+            type: "fixedCollection",
+            default: {},
+            description: "Background color to replace with",
+            typeOptions: {
+              multipleValues: false,
+            },
+            options: [
+              {
+                name: "color",
+                displayName: "Color",
+                values: [
+                  {
+                    displayName: "Red",
+                    name: "red",
+                    type: "number",
+                    default: 255,
+                    description: "Red value (0-255)",
+                    typeOptions: {
+                      minValue: 0,
+                      maxValue: 255,
+                    },
+                  },
+                  {
+                    displayName: "Green",
+                    name: "green",
+                    type: "number",
+                    default: 255,
+                    description: "Green value (0-255)",
+                    typeOptions: {
+                      minValue: 0,
+                      maxValue: 255,
+                    },
+                  },
+                  {
+                    displayName: "Blue",
+                    name: "blue",
+                    type: "number",
+                    default: 255,
+                    description: "Blue value (0-255)",
+                    typeOptions: {
+                      minValue: 0,
+                      maxValue: 255,
+                    },
+                  },
+                  {
+                    displayName: "Alpha",
+                    name: "alpha",
+                    type: "number",
+                    default: 1,
+                    description:
+                      "Transparency value (0-1). 0 is fully transparent, 1 is fully opaque",
+                    typeOptions: {
+                      minValue: 0,
+                      maxValue: 1,
+                      numberPrecision: 2,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            displayName: "Color Decontamination",
+            name: "colorDecontamination",
+            type: "number",
+            default: 1,
+            description:
+              "If > 0, removes colored reflections left on the subject by the background (0-1)",
+            typeOptions: {
+              minValue: 0,
+              maxValue: 1,
+              numberPrecision: 2,
+            },
           },
         ],
       },

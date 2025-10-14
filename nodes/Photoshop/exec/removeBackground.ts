@@ -1,7 +1,6 @@
 import {
   type IExecuteFunctions,
   type IDataObject,
-  ApplicationError,
   LoggerProxy as Logger,
 } from "n8n-workflow";
 import type { PhotoshopClient } from "../../../clients/photoshop";
@@ -11,10 +10,14 @@ export async function executeRemoveBackground(
   i: number,
   photoshopClient: PhotoshopClient,
 ): Promise<IDataObject> {
-  const inputJson = this.getNodeParameter("removeBackgroundInput", i) as string;
-  const outputJson = this.getNodeParameter(
-    "removeBackgroundOutput",
+  const imageSourceUrl = this.getNodeParameter(
+    "removeBackgroundImageUrl",
     i,
+  ) as string;
+  const mode = this.getNodeParameter(
+    "removeBackgroundMode",
+    i,
+    "cutout",
   ) as string;
   const options = this.getNodeParameter(
     "removeBackgroundOptions",
@@ -22,55 +25,51 @@ export async function executeRemoveBackground(
     {},
   ) as IDataObject;
 
-  let input: IDataObject;
-  let output: IDataObject;
-
-  try {
-    input = JSON.parse(inputJson);
-  } catch (error) {
-    throw new ApplicationError(
-      `Invalid JSON in "Input Storage": ${error.message}`,
-    );
-  }
-
-  try {
-    output = JSON.parse(outputJson);
-  } catch (error) {
-    throw new ApplicationError(
-      `Invalid JSON in "Output Storage": ${error.message}`,
-    );
-  }
-
-  // Build request
+  // Build request according to v2 API
   const request: IDataObject = {
-    input,
-    output,
+    image: {
+      source: {
+        url: imageSourceUrl,
+      },
+    },
+    mode,
   };
 
-  // Add mask format if specified
-  if (options.maskFormat) {
-    if (!request.output) {
-      request.output = {};
-    }
-    (request.output as IDataObject).mask = {
-      format: options.maskFormat,
+  // Add output options if specified
+  if (options.outputMediaType) {
+    request.output = {
+      mediaType: options.outputMediaType,
     };
   }
 
-  // Add options if specified
-  if (Object.keys(options).length > 0) {
-    request.options = {};
-    if (options.optimize) {
-      (request.options as IDataObject).optimize = options.optimize;
-    }
-    if (options.postprocess !== undefined) {
-      (request.options as IDataObject).process = {
-        postprocess: options.postprocess,
+  // Add trim option if specified
+  if (options.trim !== undefined) {
+    request.trim = options.trim;
+  }
+
+  // Add background color if specified
+  if (options.backgroundColor) {
+    const bgColorWrapper = options.backgroundColor as IDataObject;
+    // The backgroundColor is in a fixedCollection, so it's nested under 'color'
+    if (bgColorWrapper.color) {
+      const bgColor = bgColorWrapper.color as IDataObject;
+      request.backgroundColor = {
+        red: bgColor.red,
+        green: bgColor.green,
+        blue: bgColor.blue,
       };
+      if (bgColor.alpha !== undefined) {
+        (request.backgroundColor as IDataObject).alpha = bgColor.alpha;
+      }
     }
   }
 
-  Logger.info("Removing background via PhotoshopClient...", { request });
+  // Add color decontamination if specified
+  if (options.colorDecontamination !== undefined) {
+    request.colorDecontamination = options.colorDecontamination;
+  }
+
+  Logger.info("Removing background via PhotoshopClient (v2)...", { request });
 
   const response = await photoshopClient.removeBackground(
     request as object as Parameters<typeof photoshopClient.removeBackground>[0],
@@ -78,11 +77,8 @@ export async function executeRemoveBackground(
 
   Logger.info("Remove background response:", { responseData: response });
 
-  // Extract job ID from response
-  const jobId = response._links.self.href.split("/").pop();
+  // v2 API returns jobId and statusUrl directly
   return {
     ...response,
-    jobId,
   } as unknown as IDataObject;
 }
-
