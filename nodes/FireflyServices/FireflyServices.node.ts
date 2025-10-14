@@ -1059,13 +1059,42 @@ export class FireflyServices implements INodeType {
         },
         options: [
           {
+            displayName: "Beginning Keyframe Source Type",
+            name: "beginningKeyframeSourceType",
+            type: "options",
+            options: [
+              { name: "None", value: "none" },
+              { name: "Upload ID", value: "uploadId" },
+              { name: "URL", value: "url" },
+            ],
+            default: "none",
+            description: "Type of source for the first frame (position 0)",
+          },
+          {
             displayName: "Beginning Keyframe Upload ID",
             name: "beginningKeyframeUploadId",
             type: "string",
             default: "",
             placeholder: "123e4567-e89b-12d3-a456-426614174000",
-            description:
-              "Upload ID from storage API to use as the first frame of the video (position 0)",
+            description: "Upload ID from storage API to use as the first frame",
+            displayOptions: {
+              show: {
+                beginningKeyframeSourceType: ["uploadId"],
+              },
+            },
+          },
+          {
+            displayName: "Beginning Keyframe URL",
+            name: "beginningKeyframeUrl",
+            type: "string",
+            default: "",
+            placeholder: "https://example.com/image.jpg",
+            description: "Public URL of the image to use as the first frame",
+            displayOptions: {
+              show: {
+                beginningKeyframeSourceType: ["url"],
+              },
+            },
           },
           {
             displayName: "Bit Rate Factor",
@@ -1097,13 +1126,42 @@ export class FireflyServices implements INodeType {
             description: "Camera movement control for the video",
           },
           {
+            displayName: "Ending Keyframe Source Type",
+            name: "endingKeyframeSourceType",
+            type: "options",
+            options: [
+              { name: "None", value: "none" },
+              { name: "Upload ID", value: "uploadId" },
+              { name: "URL", value: "url" },
+            ],
+            default: "none",
+            description: "Type of source for the last frame (position 1)",
+          },
+          {
             displayName: "Ending Keyframe Upload ID",
             name: "endingKeyframeUploadId",
             type: "string",
             default: "",
             placeholder: "123e4567-e89b-12d3-a456-426614174000",
-            description:
-              "Upload ID from storage API to use as the last frame of the video (position 1)",
+            description: "Upload ID from storage API to use as the last frame",
+            displayOptions: {
+              show: {
+                endingKeyframeSourceType: ["uploadId"],
+              },
+            },
+          },
+          {
+            displayName: "Ending Keyframe URL",
+            name: "endingKeyframeUrl",
+            type: "string",
+            default: "",
+            placeholder: "https://example.com/image.jpg",
+            description: "Public URL of the image to use as the last frame",
+            displayOptions: {
+              show: {
+                endingKeyframeSourceType: ["url"],
+              },
+            },
           },
           {
             displayName: "Prompt Style",

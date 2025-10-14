@@ -51,38 +51,49 @@ export async function executeGenerateVideoAsync(
 
   // Build keyframe images if specified
   const conditions: Array<{
-    source: { uploadId: string };
+    source: { uploadId?: string; url?: string };
     placement: { position: number };
   }> = [];
 
   // Add beginning keyframe (position 0)
-  if (
-    videoOptions.beginningKeyframeUploadId &&
-    (videoOptions.beginningKeyframeUploadId as string).length > 0
-  ) {
-    conditions.push({
-      source: {
-        uploadId: videoOptions.beginningKeyframeUploadId as string,
-      },
-      placement: {
-        position: 0,
-      },
-    });
+  const beginningSourceType =
+    videoOptions.beginningKeyframeSourceType as string;
+  if (beginningSourceType === "uploadId") {
+    const uploadId = videoOptions.beginningKeyframeUploadId as string;
+    if (uploadId && uploadId.length > 0) {
+      conditions.push({
+        source: { uploadId },
+        placement: { position: 0 },
+      });
+    }
+  } else if (beginningSourceType === "url") {
+    const url = videoOptions.beginningKeyframeUrl as string;
+    if (url && url.length > 0) {
+      conditions.push({
+        source: { url },
+        placement: { position: 0 },
+      });
+    }
   }
 
   // Add ending keyframe (position 1)
-  if (
-    videoOptions.endingKeyframeUploadId &&
-    (videoOptions.endingKeyframeUploadId as string).length > 0
-  ) {
-    conditions.push({
-      source: {
-        uploadId: videoOptions.endingKeyframeUploadId as string,
-      },
-      placement: {
-        position: 1,
-      },
-    });
+  const endingSourceType = videoOptions.endingKeyframeSourceType as string;
+  if (endingSourceType === "uploadId") {
+    const uploadId = videoOptions.endingKeyframeUploadId as string;
+    if (uploadId && uploadId.length > 0) {
+      conditions.push({
+        source: { uploadId },
+        placement: { position: 1 },
+      });
+    }
+  } else if (endingSourceType === "url") {
+    const url = videoOptions.endingKeyframeUrl as string;
+    if (url && url.length > 0) {
+      conditions.push({
+        source: { url },
+        placement: { position: 1 },
+      });
+    }
   }
 
   // Add keyframes to request if any were specified
