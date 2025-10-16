@@ -266,7 +266,7 @@ export class Photoshop implements INodeType {
                     type: "number",
                     default: 1,
                     description:
-                      "Transparency value (0-1). 0 is fully transparent, 1 is fully opaque",
+                      "Transparency value (0-1). 0 is fully transparent, 1 is fully opaque.",
                     typeOptions: {
                       minValue: 0,
                       maxValue: 1,
@@ -831,7 +831,7 @@ export class Photoshop implements INodeType {
         required: true,
         default: "={{ $json.statusUrl }}",
         description:
-          "The full status URL from the job submission response. Works for all Photoshop operations (PSD, masking, background removal, etc.)",
+          "The full status URL from the job submission response. Works for all Photoshop operations (PSD, masking, background removal, etc).",
         placeholder: "https://image.adobe.io/v2/status/abc-123",
         displayOptions: {
           show: {

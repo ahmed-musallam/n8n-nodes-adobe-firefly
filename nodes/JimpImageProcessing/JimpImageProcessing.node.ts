@@ -467,7 +467,15 @@ export class JimpImageProcessing implements INodeType {
           // Convert to buffer
           // Get the buffer based on the mime type
           const mimeType = binaryData.mimeType || "image/jpeg";
-          const processedBuffer = await image.getBuffer(mimeType as any);
+          const processedBuffer = await image.getBuffer(
+            mimeType as
+              | "image/jpeg"
+              | "image/bmp"
+              | "image/tiff"
+              | "image/x-ms-bmp"
+              | "image/gif"
+              | "image/png",
+          );
 
           // Determine file extension
           let fileExtension = "jpg";
@@ -656,7 +664,15 @@ export class JimpImageProcessing implements INodeType {
 
           // Convert to buffer
           const mimeType = backgroundBinaryData.mimeType || "image/png";
-          const compositedBuffer = await background.getBuffer(mimeType as any);
+          const compositedBuffer = await background.getBuffer(
+            mimeType as
+              | "image/png"
+              | "image/bmp"
+              | "image/tiff"
+              | "image/x-ms-bmp"
+              | "image/gif"
+              | "image/jpeg",
+          );
 
           // Determine file extension
           let fileExtension = "png";

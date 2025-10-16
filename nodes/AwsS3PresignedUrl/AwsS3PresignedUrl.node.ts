@@ -196,11 +196,13 @@ export class AwsS3PresignedUrl implements INodeType {
               customParams.parameter &&
               Array.isArray(customParams.parameter)
             ) {
-              customParams.parameter.forEach((param: any) => {
-                if (param.name && param.value) {
-                  queryParams[param.name] = param.value;
-                }
-              });
+              customParams.parameter.forEach(
+                (param: { name: string; value: string }) => {
+                  if (param.name && param.value) {
+                    queryParams[param.name] = param.value;
+                  }
+                },
+              );
             }
           }
 
