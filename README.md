@@ -2,6 +2,8 @@
 
 This is an n8n community node. It lets you use Adobe Firefly Services, Photoshop API, and Audio/Video API in your n8n workflows.
 
+> Code is mostly Cursor generated with highly technical guidance, so be kind.
+
 Adobe Firefly is a generative AI service that allows you to create stunning images, videos, speech, and avatars from text prompts. The Photoshop API provides professional-grade image editing capabilities including AI-powered background removal, masking, and generative fill.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.

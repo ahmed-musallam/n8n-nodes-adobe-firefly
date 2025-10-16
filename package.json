@@ -14,8 +14,10 @@
     "dev": "n8n-node dev",
     "lint": "n8n-node lint",
     "lint:fix": "n8n-node lint --fix",
-    "release": "n8n-node release",
-    "prepublishOnly": "n8n-node prerelease"
+    "test": "echo 'No tests yet'",
+    "commit": "cz",
+    "prepare": "husky",
+    "semantic-release": "semantic-release"
   },
   "files": [
     "dist"
@@ -74,11 +76,21 @@
     "email": "musallam@adobe.com"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@n8n/node-cli": "*",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.0",
+    "@semantic-release/npm": "^13.0.0",
     "@types/node": "^24.7.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "9.32.0",
+    "husky": "^9.1.7",
     "prettier": "3.6.2",
     "release-it": "^19.0.4",
+    "semantic-release": "^25.0.0",
     "typescript": "5.9.2"
   },
   "peerDependencies": {
@@ -87,5 +99,10 @@
   "dependencies": {
     "@gltf-transform/core": "^4.2.1",
     "jimp": "^1.6.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
