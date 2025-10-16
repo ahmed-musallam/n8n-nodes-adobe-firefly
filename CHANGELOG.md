@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/compare/v1.0.0...v1.1.0) (2025-10-16)
+
+
+### Features
+
+* automated semantic release ([dacc752](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/commit/dacc752aa86067a246310818c3868209afec5f92))
+
 # 1.0.0 (2025-10-16)
 
 
