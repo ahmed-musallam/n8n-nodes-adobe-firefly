@@ -1,6 +1,6 @@
 {
   "name": "@musallam/n8n-nodes-firefly-services",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "n8n community node for Adobe Firefly Services, Photoshop API, and Substance 3D - Generate images, videos, 3D content, and edit photos using Adobe's generative AI and professional editing tools",
   "license": "MIT",
   "homepage": "https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly",
