@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/compare/v1.2.0...v1.3.0) (2025-10-16)
+
+
+### Bug Fixes
+
+* add doc warning and update package name and location ([94b6072](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/commit/94b60725cf2b98b80e99341b56224538ba7e37b4))
+
+
+### Features
+
+* update all icons ([9664d93](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/commit/9664d93f69d6d53bb76eebf40bee3bc8b1705d9b))
+
 # [1.2.0](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/compare/v1.1.0...v1.2.0) (2025-10-16)
 
 
