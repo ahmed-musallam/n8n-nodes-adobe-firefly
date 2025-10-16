@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/compare/v1.1.0...v1.2.0) (2025-10-16)
+
+
+### Features
+
+* publish publicly ([75192ec](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/commit/75192ec3d816ab4991089e86dae4267232ac47f6))
+
 # [1.1.0](https://github.com/ahmed-musallam/n8n-nodes-adobe-firefly/compare/v1.0.0...v1.1.0) (2025-10-16)
 
 
