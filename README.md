@@ -1,6 +1,9 @@
-# n8n-nodes-adobe-firefly
+# n8n-nodes-firefly-services
 
-This is an n8n community node. It lets you use Adobe Firefly Services, Photoshop API, and Audio/Video API in your n8n workflows.
+This is an n8n community node. It lets you use [Adobe Firefly Services, Photoshop API, and Audio/Video API](https://developer.adobe.com/firefly-services/docs/firefly-api/) in your n8n workflows.
+
+> [!WARNING]  
+> This is NOT an official Adobe Node. it's just a community node that uses adobe publicly available APIs.
 
 > Code is mostly Cursor generated with highly technical guidance, so be kind.
 
@@ -24,7 +27,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 To get started, install the package in your n8n root directory:
 
 ```bash
-npm install n8n-nodes-adobe-firefly
+npm install @musallam/n8n-nodes-firefly-services
 ```
 
 For Docker-based deployments, add the package in your [data folder's](https://docs.n8n.io/hosting/environment-variables/deployment/#data-locations) `package.json` file with any other dependencies.
@@ -171,8 +174,8 @@ This project uses the [`n8n-node` CLI tool](https://docs.n8n.io/integrations/cre
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/yourusername/n8n-nodes-adobe-firefly.git
-   cd n8n-nodes-adobe-firefly
+   git clone https://github.com/ahmed-musallam/n8n-nodes-firefly-services.git
+   cd n8n-nodes-firefly-services
    ```
 
 2. **Install dependencies**:
@@ -211,7 +214,7 @@ see: [sample-workflows](./sample-workflows)
 ### Project Structure
 
 ```
-n8n-nodes-adobe-firefly/
+n8n-nodes-firefly-services/
 ├── .cursor/              # Cursor IDE rules and schemas
 │   ├── rules/           # Development guidelines
 │   └── schema/          # OpenAPI specifications

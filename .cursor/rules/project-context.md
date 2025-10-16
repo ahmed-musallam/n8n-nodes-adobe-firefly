@@ -2,7 +2,7 @@
 
 This is an n8n community node package for Adobe Firefly API integration.
 
-**Package Name**: n8n-nodes-adobe-firefly  
+**Package Name**: n8n-nodes-firefly-services
 **Description**: n8n community node to work with the Adobe Firefly API  
 **n8n API Version**: 1
 
