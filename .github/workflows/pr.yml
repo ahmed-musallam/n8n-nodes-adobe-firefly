@@ -2,7 +2,6 @@ name: CI
 
 on:
   pull_request:
-  push:
     branches:
       - main
 
@@ -13,16 +12,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
-        run: "npm ci"
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
 
       - name: Run lint
-        run: "npm run lint"
+        run: npm run lint
 
-      - name: Run build
-        run: "npm run build"
+      - name: Build
+        run: npm run build
+
+      - name: Verify build output
+        run: ls -la dist/
